@@ -3932,9 +3932,14 @@ void GCS_MAVLINK::handle_odometry(const mavlink_message_t &msg)
     mavlink_odometry_t m;
     mavlink_msg_odometry_decode(&msg, &m);
 
+    // (dakre) TODO handle optical flow odom here
+    if (m.frame_id == 99) {
+        printf("ODOM FRAME ID %d\n", m.frame_id);
+        return;
+    }
+    
     if (m.frame_id != MAV_FRAME_LOCAL_FRD ||
         m.child_frame_id != MAV_FRAME_BODY_FRD) {
-        // only support local FRD frame data
         return;
     }
 
