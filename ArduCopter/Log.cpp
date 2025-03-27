@@ -12,11 +12,14 @@ struct PACKED log_Control_Tuning {
     float    throttle_in;
     float    angle_boost;
     float    throttle_out;
+    float    roll_desired;
+    float    pitch_desired;
+    float    yaw_desired;
     float    throttle_hover;
     float    desired_alt;
-    float    inav_alt;
-    int32_t  baro_alt;
-    float    desired_rangefinder_alt;
+    // float    inav_alt;
+    // int32_t  baro_alt;
+    // float    desired_rangefinder_alt;
     float    rangefinder_alt;
     float    terr_alt;
     int16_t  target_climb_rate;
@@ -56,11 +59,15 @@ void Copter::Log_Write_Control_Tuning()
         throttle_in         : attitude_control->get_throttle_in(),
         angle_boost         : attitude_control->angle_boost(),
         throttle_out        : motors->get_throttle(),
+        roll_desired        : motors->get_roll() + motors->get_roll_ff(), //////////////// I added these (Ian)
+        pitch_desired       : motors->get_pitch() + motors->get_pitch_ff(),
+        yaw_desired         : motors->get_yaw() + motors->get_yaw_ff(),
         throttle_hover      : motors->get_throttle_hover(),
         desired_alt         : des_alt_m,
-        inav_alt            : inertial_nav.get_position_z_up_cm() * 0.01f,
-        baro_alt            : baro_alt,
-        desired_rangefinder_alt : desired_rangefinder_alt,
+        // inav_alt            : inertial_nav.get_position_z_up_cm() * 0.01f,
+        // baro_alt            : baro_alt,
+        // desired_rangefinder_alt : desired_rangefinder_alt,
+        
 #if AP_RANGEFINDER_ENABLED
         rangefinder_alt     : surface_tracking.get_dist_for_logging(),
 #else
@@ -480,8 +487,10 @@ const struct LogStructure Copter::log_structure[] = {
 // @Field: Id: Data type identifier
 // @Field: Value: Value
 
+// ,Alt,BAlt,DSAlt,
+
     { LOG_CONTROL_TUNING_MSG, sizeof(log_Control_Tuning),
-      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,ThH,DAlt,Alt,BAlt,DSAlt,SAlt,TAlt,DCRt,CRt", "s----mmmmmmnn", "F----00B000BB" , true },
+      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,Roll,Pitch,Yaw,ThH,DAlt,SAlt,TAlt,DCRt,CRt", "s----mmmmmmnn", "F----00B000BB" , true },
     { LOG_DATA_INT16_MSG, sizeof(log_Data_Int16t),         
       "D16",   "QBh",         "TimeUS,Id,Value", "s--", "F--" },
     { LOG_DATA_UINT16_MSG, sizeof(log_Data_UInt16t),         
