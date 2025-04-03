@@ -35,25 +35,28 @@ AP_Strain::AP_Strain()
 // initialise the strain object, loading backend drivers
 void AP_Strain::init(void)
 {   
-    if (num_instances != 0) {
+    if (_num_sensors != 0) {
         // don't re-init if we've found some sensors already
         return;
     }
-
+    // ?? add checks to ensure the sensors are initalized correctly 
     for (uint8_t i=0; i<STRAIN_MAX_INSTANCES; i++) {
-        detect_instance(i);
-        drivers[i]->init();
         sensors[i].status = Status::NotConnected;
         sensors[i].healthy = false;
         sensors[i].calibrated = false;
-        
+        sensors[i].I2C_id = 0x9 + i;
+        detect_instance(i);
+        drivers[i]->init();
+        _num_sensors++;
     }
+
+    init_done = true;
     // AP_HAL::panic("AP_Strain::init() not implemented");
 }
 
 void AP_Strain::update(void)
 {
-    for (uint8_t i=0; i<num_instances; i++) {
+    for (uint8_t i=0; i<_num_sensors; i++) {
         if (drivers[i] != nullptr) {
             drivers[i]->update();
         }
@@ -63,46 +66,62 @@ void AP_Strain::update(void)
     // Log_Strain();
 }
 
-// zero the strain sensors 
-void AP_Strain::calibrate(void)
-{
-    for (uint8_t i=0; i<num_instances; i++) {
-        if (drivers[i] != nullptr) {
-            drivers[i]->calibrate();
-        }
+AP_Strain_Backend *AP_Strain::get_backend(uint8_t id) const {
+    if (id >= STRAIN_MAX_INSTANCES) {
+        return nullptr;
     }
-}
+    if (drivers[id] != nullptr) {
+        
+        return nullptr;
+        
+    }
+    return drivers[id];
+};
+
+// zero the strain sensors 
+// void AP_Strain::calibrate(void)
+// {
+//     for (uint8_t i=0; i<num_instances; i++) {
+//         if (drivers[i] != nullptr) {
+//             drivers[i]->calibrate();
+//         }
+//     }
+// }
 
 // adds backend driver to the front end object
-bool AP_Strain::_add_backend(AP_Strain_Backend *backend, uint8_t instance)
+bool AP_Strain::_add_backend(AP_Strain_Backend *backend , uint8_t instance)
 {
     if (!backend) {
         return false;
     }
-    if (_num_drivers >= STRAIN_MAX_INSTANCES) {
+    if (instance >= STRAIN_MAX_INSTANCES) {
         AP_HAL::panic("Too many Strain drivers");
     }
-    drivers[_num_drivers++] = backend;
+    if (drivers[instance] != nullptr) 
+    {
+        // we've allocated the same instance twice
+        INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
+    }
+    drivers[instance] = backend;
+    _num_sensors = MAX(_num_sensors, instance+1);
     return true;
 }
 
 void AP_Strain::detect_instance(uint8_t instance)
 {
-    if (sensors[instance].address) 
+    
+    #ifndef HAL_BUILD_AP_PERIPH
+    if (!hal.util->was_watchdog_armed()) 
     {
-        #ifndef HAL_BUILD_AP_PERIPH
-        if (!hal.util->was_watchdog_armed()) 
-        {
-            hal.scheduler->delay(100);
-        }
-        #endif
+        hal.scheduler->delay(100);
+    }
+    #endif
 
-        FOREACH_I2C(i) 
+    FOREACH_I2C(i) 
+    {
+        if (_add_backend(AP_Strain_Backend::detect(sensors[instance],hal.i2c_mgr->get_device(i, sensors[instance].I2C_id)), instance)) 
         {
-            if (_add_backend(AP_Strain_Backend::detect(hal.i2c_mgr->get_device(i, params[instance].address)), instance)) 
-            {
-                break;
-            }
+            break;
         }
     }
 }
