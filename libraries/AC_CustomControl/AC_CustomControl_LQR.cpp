@@ -1,6 +1,6 @@
 #include "AC_CustomControl_config.h"
 
-// #if AP_CUSTOMCONTROL_EMPTY_ENABLED
+#if AP_CUSTOMCONTROL_EMPTY_ENABLED
 
 #include "AC_CustomControl_LQR.h"
 
@@ -71,4 +71,4 @@ void AC_CustomControl_LQR::reset(void)
 {
 }
 
-// #endif  // AP_CUSTOMCONTROL_EMPTY_ENABLED
+#endif  // AP_CUSTOMCONTROL_EMPTY_ENABLED
