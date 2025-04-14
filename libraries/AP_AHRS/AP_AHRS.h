@@ -549,7 +549,7 @@ public:
     // (Ian)
     ////////////////////////////
 
-    void set_oflow_vector( float a1, float a2, float a3, bool active_flag);
+    bool set_oflow_vector( float a1, float a2, float a3, bool active_flag);
 
 
     Vector3f get_alpha_values(void) const {

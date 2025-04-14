@@ -374,13 +374,13 @@ Vector3f AC_CustomControl_PID::update()
     vector3f oflow_states = _att_control->get_oflow_states();
     bool oflow_active = _att_control->get_oflow_active();
 
-    // TODO add oflow_states * C = oflow_states_error
-    // oflow_states_error 
-
     if (oflow_active) {
-        // target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error.x;
-        // target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error.y;
-        // target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2] + oflow_states_error.z;
+        // Multiply the matrix with the oflow_states vector
+        Vector3f oflow_states_error = C_matrix * oflow_states;
+
+        target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error.x;
+        target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error.y;
+        target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2] + oflow_states_error.z;
     } else
     {
         target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0];

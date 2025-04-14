@@ -3934,12 +3934,13 @@ void GCS_MAVLINK::handle_odometry(const mavlink_message_t &msg)
 
     // (dakre) TODO handle optical flow odom here
     if (m.frame_id == 99) {
-        const AP_AHRS &ahrs = AP::ahrs();
         // TODO conect oflow message to ahrs
         // ahrs.set_oflow_vector(m.a1, m.a2, m.a3, m.active_flag);
-        ahrs.set_oflow_vector(1, 1, 1, false);
-
+    
         printf("ODOM FRAME ID %d\n", m.frame_id);
+        if(AP::ahrs().set_oflow_vector(1, 1, 1, true))
+            printf("sent %d\n", 1.0);
+
         return;
     }
     
