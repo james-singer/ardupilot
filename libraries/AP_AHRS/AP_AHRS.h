@@ -546,6 +546,23 @@ public:
         return _home_is_set;
     }
 
+    // (Ian)
+    ////////////////////////////
+
+    void set_oflow_vector( float a1, float a2, float a3, bool active_flag);
+
+
+    Vector3f get_alpha_values(void) const {
+        return oflow_states.alpha_states;
+    }
+
+    bool get_oflow_active(void) const {
+        return oflow_states.oflow_active;
+    }
+
+    ////////////////////////////
+
+
     // set the home location in 10e7 degrees. This should be called
     // when the vehicle is at this position. It is assumed that the
     // current barometer and GPS altitudes correspond to this altitude
@@ -946,6 +963,18 @@ private:
     // returns an EKF type to be used as active if we decide the
     // primary is not good enough.
     EKFType fallback_active_EKF_type(void) const;
+
+
+    // (Ian)
+    ///////////////////
+    struct {
+
+        Vector3f alpha_states;  // the combined states from the O-flow measurements
+        bool oflow_active;     // true if the cams are sending data
+
+    } oflow_states;
+
+    //////////////////
 
     /*
       state updated at the end of each update() call

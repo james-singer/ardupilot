@@ -2957,6 +2957,17 @@ bool AP_AHRS::_get_origin(Location &ret) const
     }
     return false;
 }
+// (Ian)
+///////////////////
+void AP_AHRS::set_oflow_vector( float a1, float a2, float a3, bool active_flag)
+{
+    oflow_states.alpha_states.x = a1;
+    oflow_states.alpha_states.y = a2;
+    oflow_states.alpha_states.z = a3;
+    oflow_states.oflow_active = active_flag;
+}
+
+/////////////////////////
 
 bool AP_AHRS::set_home(const Location &loc)
 {
