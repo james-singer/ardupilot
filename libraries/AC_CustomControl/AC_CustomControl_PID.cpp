@@ -371,12 +371,12 @@ Vector3f AC_CustomControl_PID::update()
     //////////////////////////////////////////////////////////////// add the oflow input here
     Vector3f target_rate;
 
-    vector3f oflow_states = _att_control->get_oflow_states();
-    bool oflow_active = _att_control->get_oflow_active();
+    vector3f oflow_states = _ahrs->get_oflow_states();
+    int oflow_cams_active = _ahrs->get_oflow_active();
 
     if (oflow_active) {
         // Multiply the matrix with the oflow_states vector
-        Vector3f oflow_states_error = C_matrix * oflow_states;
+        Vector3f oflow_states_error = K_matrix * oflow_states;
 
         target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error.x;
         target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error.y;

@@ -29,6 +29,12 @@ protected:
     // put controller related variable here
     float _dt;
 
+    // Create the transformation matrix C
+    Matrix3f K_matrix(1.0f, 2.0f, 3.0f,
+        4.0f, 5.0f, 6.0f,
+        7.0f, 8.0f, 9.0f);
+
+
     // angle P controller  objects
     AC_P                _p_angle_roll2;
     AC_P                _p_angle_pitch2;

@@ -549,15 +549,15 @@ public:
     // (Ian)
     ////////////////////////////
 
-    bool set_oflow_vector( float a1, float a2, float a3, bool active_flag);
+    bool set_oflow_vector( float a1, float a2, float a3, int active_flag);
 
 
     Vector3f get_alpha_values(void) const {
         return oflow_states.alpha_states;
     }
 
-    bool get_oflow_active(void) const {
-        return oflow_states.oflow_active;
+    int get_oflow_active(void) const {
+        return oflow_states.oflow_cams_active;
     }
 
     ////////////////////////////
@@ -970,7 +970,7 @@ private:
     struct {
 
         Vector3f alpha_states;  // the combined states from the O-flow measurements
-        bool oflow_active;     // true if the cams are sending data
+        int oflow_cams_active;     // true if the cams are sending data
 
     } oflow_states;
 

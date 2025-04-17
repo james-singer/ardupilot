@@ -3934,11 +3934,10 @@ void GCS_MAVLINK::handle_odometry(const mavlink_message_t &msg)
 
     if (m.frame_id == 99) {
         // TODO conect oflow message to ahrs
-        ahrs.set_oflow_vector(m.x, m.y, m.z, m.q);
-    
+
         printf("ODOM FRAME ID %d\n", m.frame_id);
-        if(AP::ahrs().set_oflow_vector(1, 1, 1, true))
-            printf("sent %d\n", 1.0);
+        if(AP::ahrs().set_oflow_vector(m.x, m.y, m.z, m.q))
+            printf("cams %d\n", m.q);
 
         return;
     }
