@@ -2959,13 +2959,15 @@ bool AP_AHRS::_get_origin(Location &ret) const
 }
 // (Ian)
 ///////////////////
-bool AP_AHRS::set_oflow_vector( float a1, float a2, float a3, int active_cams)
+bool AP_AHRS::set_oflow_vector( float p, float q, float u, float v , float active_cams)
 {
-    oflow_states.alpha_states.x = a1;
-    oflow_states.alpha_states.y = a2;
-    oflow_states.alpha_states.z = a3;
+    oflow_states.oflow_state[0] = p;
+    oflow_states.oflow_state[0] = q;
+    oflow_states.oflow_state[0] = u;
+    oflow_states.oflow_state[0] = v;
+
     oflow_states.oflow_cams_active = active_cams;
-    if (active_cams >3)
+    if (active_cams >3.0)
     {
         return true;
     }

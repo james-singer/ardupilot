@@ -365,22 +365,28 @@ Vector3f AC_CustomControl_PID::update()
     // target angle velocity vector in the body frame
     Vector3f ang_vel_body_feedforward = rotation_target_to_body * _att_control->get_attitude_target_ang_vel();
 
-
+    
     // run attitude controller
     // (Ian)
     //////////////////////////////////////////////////////////////// add the oflow input here
     Vector3f target_rate;
 
-    vector3f oflow_states = _ahrs->get_oflow_states();
-    int oflow_cams_active = _ahrs->get_oflow_active();
 
-    if (oflow_active) {
+    oflow_states = _ahrs->get_oflow_states();
+    oflow_cams_active = _ahrs->get_oflow_active();
+
+    if (oflow_cams_active > 3.0) {
         // Multiply the matrix with the oflow_states vector
-        Vector3f oflow_states_error = K_matrix * oflow_states;
+        VectorN<float, 4> temp_vec = C_matrix * oflow_states;
+        synthesized_states[0] = temp_vec[0];
+        synthesized_states[1] = temp_vec[1];
+        synthesized_states[2] = temp_vec[2];
 
-        target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error.x;
-        target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error.y;
-        target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2] + oflow_states_error.z;
+        oflow_states_error = K_matrix * synthesized_states;
+
+        target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error[0];
+        target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error[1];
+        target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2] + oflow_states_error[2];
     } else
     {
         target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0];
