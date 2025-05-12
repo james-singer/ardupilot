@@ -320,12 +320,12 @@ const AP_Param::GroupInfo AC_CustomControl_PID::var_info[] = {
 
 AC_CustomControl_PID::AC_CustomControl_PID(AC_CustomControl& frontend, AP_AHRS_View*& ahrs, AC_AttitudeControl*& att_control, AP_MotorsMulticopter*& motors, float dt) :
     AC_CustomControl_Backend(frontend, ahrs, att_control, motors, dt),
-    _p_angle_roll2(AC_ATTITUDE_CONTROL_ANGLE_P * 0.90f),
-    _p_angle_pitch2(AC_ATTITUDE_CONTROL_ANGLE_P * 0.90f),
-    _p_angle_yaw2(AC_ATTITUDE_CONTROL_ANGLE_P * 0.90f),
-    _pid_atti_rate_roll(AC_ATC_MULTI_RATE_RP_P * 0.90f, AC_ATC_MULTI_RATE_RP_I * 0.90f, AC_ATC_MULTI_RATE_RP_D * 0.90f, 0.0f, AC_ATC_MULTI_RATE_RP_IMAX * 0.90f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 0.90f, 0.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 0.90f),
-    _pid_atti_rate_pitch(AC_ATC_MULTI_RATE_RP_P * 0.90f, AC_ATC_MULTI_RATE_RP_I * 0.90f, AC_ATC_MULTI_RATE_RP_D * 0.90f, 0.0f, AC_ATC_MULTI_RATE_RP_IMAX * 0.90f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 0.90f, 0.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 0.90f),
-    _pid_atti_rate_yaw(AC_ATC_MULTI_RATE_YAW_P * 0.90f, AC_ATC_MULTI_RATE_YAW_I * 0.90f, AC_ATC_MULTI_RATE_YAW_D * 0.90f, 0.0f, AC_ATC_MULTI_RATE_YAW_IMAX * 0.90f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 0.90f, AC_ATC_MULTI_RATE_YAW_FILT_HZ * 0.90f, 0.0f)
+    _p_angle_roll2(AC_ATTITUDE_CONTROL_ANGLE_P * 1.0f),
+    _p_angle_pitch2(AC_ATTITUDE_CONTROL_ANGLE_P * 1.0f),
+    _p_angle_yaw2(AC_ATTITUDE_CONTROL_ANGLE_P * 1.0f),
+    _pid_atti_rate_roll(AC_ATC_MULTI_RATE_RP_P * 1.0f, AC_ATC_MULTI_RATE_RP_I * 1.0f, AC_ATC_MULTI_RATE_RP_D * 1.0f, 0.0f, AC_ATC_MULTI_RATE_RP_IMAX * 1.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 1.0f, 0.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 1.0f),
+    _pid_atti_rate_pitch(AC_ATC_MULTI_RATE_RP_P * 1.0f, AC_ATC_MULTI_RATE_RP_I * 1.0f, AC_ATC_MULTI_RATE_RP_D * 1.0f, 0.0f, AC_ATC_MULTI_RATE_RP_IMAX * 1.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 1.0f, 0.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 1.0f),
+    _pid_atti_rate_yaw(AC_ATC_MULTI_RATE_YAW_P * 1.0f, AC_ATC_MULTI_RATE_YAW_I * 1.0f, AC_ATC_MULTI_RATE_YAW_D * 1.0f, 0.0f, AC_ATC_MULTI_RATE_YAW_IMAX * 1.0f, AC_ATC_MULTI_RATE_RPY_FILT_HZ * 1.0f, AC_ATC_MULTI_RATE_YAW_FILT_HZ * 1.0f, 0.0f)
 {
     _dt = dt;
     AP_Param::setup_object_defaults(this, var_info);
@@ -370,10 +370,23 @@ Vector3f AC_CustomControl_PID::update()
     // (Ian)
     //////////////////////////////////////////////////////////////// add the oflow input here
     Vector3f target_rate;
+    
+    bool CAM_QUAD = false
+    
+    if (CAM_QUAD)
+    {
 
+        oflow_states = _ahrs->get_oflow_states();
+        oflow_cams_active = _ahrs->get_oflow_active();
 
-    oflow_states = _ahrs->get_oflow_states();
-    oflow_cams_active = _ahrs->get_oflow_active();
+    }
+    else
+    {
+
+        oflow_states = _ahrs->();
+        oflow_cams_active = 8.0;
+
+    }
 
     if (oflow_cams_active > 3.0) {
         // Multiply the matrix with the oflow_states vector
@@ -387,7 +400,8 @@ Vector3f AC_CustomControl_PID::update()
         target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0] + oflow_states_error[0];
         target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1] + oflow_states_error[1];
         target_rate[2] = _p_angle_yaw2.kP() * attitude_error.z + ang_vel_body_feedforward[2] + oflow_states_error[2];
-    } else
+    } 
+    else
     {
         target_rate[0] = _p_angle_roll2.kP() * attitude_error.x + ang_vel_body_feedforward[0];
         target_rate[1] = _p_angle_pitch2.kP() * attitude_error.y + ang_vel_body_feedforward[1];
