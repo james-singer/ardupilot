@@ -18,6 +18,8 @@
 #include <AP_GPS/AP_GPS.h>
 #include <AP_Vehicle/AP_Vehicle.h>
 
+#define BUS_NUMBER 3
+
 
 extern const AP_HAL::HAL& hal;
 
@@ -45,7 +47,16 @@ void AP_Strain::init(void)
         sensors[i].healthy = false;
         sensors[i].calibrated = false;
         sensors[i].I2C_id = 0x9 + i;
-        detect_instance(i);
+        // Want to dynamically allocate the bew backend object
+        // First need to obtain a smart pointer to an I2C Device
+        AP_HAL::OwnPtr<AP_HAL::I2CDevice> = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
+        // Need to dynamically allocate a new backend object
+        // Need to create a new OwnPtr for that backend object
+
+
+
+        // new comment
+        
         drivers[i]->init();
         _num_sensors++;
     }
