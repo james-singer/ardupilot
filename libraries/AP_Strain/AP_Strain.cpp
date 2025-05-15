@@ -49,12 +49,14 @@ void AP_Strain::init(void)
         sensors[i].I2C_id = 0x9 + i;
         // Want to dynamically allocate the bew backend object
         // First need to obtain a smart pointer to an I2C Device
-        AP_HAL::OwnPtr<AP_HAL::I2CDevice> = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
+        AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
         // Need to dynamically allocate a new backend object
-        // Need to create a new OwnPtr for that backend  
+        AP_Strain_Backend *temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], dev_temp);
+        drivers[i] = temp;
         drivers[i]->init();
         _num_sensors++;
     }
+    // At this point we should haver all four entries in drivers pointed to initialized backend objects
 
     init_done = true;
     // AP_HAL::panic("AP_Strain::init() not implemented");
@@ -95,42 +97,42 @@ AP_Strain_Backend *AP_Strain::get_backend(uint8_t id) const {
 // }
 
 // adds backend driver to the front end object
-bool AP_Strain::_add_backend(AP_Strain_Backend *backend , uint8_t instance)
-{
-    if (!backend) {
-        return false;
-    }
-    if (instance >= STRAIN_MAX_INSTANCES) {
-        AP_HAL::panic("Too many Strain drivers");
-    }
-    if (drivers[instance] != nullptr) 
-    {
-        // we've allocated the same instance twice
-        INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
-    }
-    drivers[instance] = backend;
-    _num_sensors = MAX(_num_sensors, instance+1);
-    return true;
-}
+// bool AP_Strain::_add_backend(AP_Strain_Backend *backend , uint8_t instance)
+// {
+//     if (!backend) {
+//         return false;
+//     }
+//     if (instance >= STRAIN_MAX_INSTANCES) {
+//         AP_HAL::panic("Too many Strain drivers");
+//     }
+//     if (drivers[instance] != nullptr) 
+//     {
+//         // we've allocated the same instance twice
+//         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
+//     }
+//     drivers[instance] = backend;
+//     _num_sensors = MAX(_num_sensors, instance+1);
+//     return true;
+// }
 
-void AP_Strain::detect_instance(uint8_t instance)
-{
+// void AP_Strain::detect_instance(uint8_t instance)
+// {
     
-    #ifndef HAL_BUILD_AP_PERIPH
-    if (!hal.util->was_watchdog_armed()) 
-    {
-        hal.scheduler->delay(100);
-    }
-    #endif
+//     #ifndef HAL_BUILD_AP_PERIPH
+//     if (!hal.util->was_watchdog_armed()) 
+//     {
+//         hal.scheduler->delay(100);
+//     }
+//     #endif
 
-    FOREACH_I2C(i) 
-    {
-        if (_add_backend(AP_Strain_Backend::detect(sensors[instance],hal.i2c_mgr->get_device(i, sensors[instance].I2C_id)), instance)) 
-        {
-            break;
-        }
-    }
-}
+//     FOREACH_I2C(i) 
+//     {
+//         if (_add_backend(AP_Strain_Backend::detect(sensors[instance],hal.i2c_mgr->get_device(i, sensors[instance].I2C_id)), instance)) 
+//         {
+//             break;
+//         }
+//     }
+// }
 
 namespace AP {
 

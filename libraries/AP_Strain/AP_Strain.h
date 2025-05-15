@@ -36,6 +36,7 @@ class AP_Strain
     {
         return _singleton;
     }
+    // test comment
 
     // initialise the strain object, loading backend drivers
     void init(void);
@@ -84,9 +85,9 @@ class AP_Strain
     } sensors[STRAIN_MAX_INSTANCES];
 
 
-    bool _add_backend(AP_Strain_Backend *backend , uint8_t instance);
+    // bool _add_backend(AP_Strain_Backend *backend , uint8_t instance);
 
-    void detect_instance(uint8_t instance);
+    // void detect_instance(uint8_t instance);
 
 };
 

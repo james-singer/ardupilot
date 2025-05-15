@@ -5,6 +5,8 @@
 #include <AP_HAL/Semaphores.h>
 #include <AP_HAL/I2CDevice.h>
 
+#define BUS_NUMBER 3
+
 class AP_Strain_Backend
 {
 public:
@@ -23,6 +25,8 @@ public:
     // true if sensor is returning data
     bool has_data() const;
 
+    // Link function creates new smart pointer to I2CDevice
+    // bool link(uint8_t address);
 
     // true if sensor is returning data
     // bool has_data() const;
