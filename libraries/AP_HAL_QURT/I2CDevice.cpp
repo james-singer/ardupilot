@@ -30,7 +30,7 @@ using namespace QURT;
   bus5: barometer (internal)*
   bus4: external spare bus (unused)
 */
-static uint8_t i2c_bus_ids[] = { 1, 2, 5 };
+static uint8_t i2c_bus_ids[] = { 1, 2, 5, 4 };
 
 static uint32_t i2c_internal_mask = (1U<<3);
 
