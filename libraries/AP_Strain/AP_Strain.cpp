@@ -51,12 +51,7 @@ void AP_Strain::init(void)
         // First need to obtain a smart pointer to an I2C Device
         AP_HAL::OwnPtr<AP_HAL::I2CDevice> = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
         // Need to dynamically allocate a new backend object
-        // Need to create a new OwnPtr for that backend object
-
-
-
-        // new comment
-        
+        // Need to create a new OwnPtr for that backend  
         drivers[i]->init();
         _num_sensors++;
     }
