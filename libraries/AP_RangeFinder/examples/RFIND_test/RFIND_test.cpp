@@ -30,19 +30,6 @@ static uint8_t poll = 0x50;
 
 void setup()
 {
-    // // print welcome message
-    // hal.console->printf("Range Finder library test\n");
-
-    // // setup for analog pin 13
-    // AP_Param::set_object_value(&sonar, sonar.var_info, "_TYPE", (uint8_t)RangeFinder::Type::PLI2C);
-    // AP_Param::set_object_value(&sonar, sonar.var_info, "_PIN", -1.0f);
-    // AP_Param::set_object_value(&sonar, sonar.var_info, "_SCALING", 1.0f);
-
-    // // initialise sensor, delaying to make debug easier
-    // hal.scheduler->delay(2000);
-    // // sonar.init(ROTATION_PITCH_270);
-    // // hal.console->printf("RangeFinder: %d devices detected\n", sonar.num_sensors());
-
 
     // strain
     hal.scheduler->delay(100);
@@ -97,49 +84,6 @@ void loop()
     
     dev_temp->get_semaphore()->give();
     
-    // Write the combined value into the sensor's data field
-
-//     // Delay between reads
-//     hal.scheduler->delay(100);
-//     sonar.update();
-
-//     bool had_data = false;
-//     for (uint8_t i=0; i<sonar.num_sensors(); i++) {
-//         AP_RangeFinder_Backend *sensor = sonar.get_backend(i);
-//         if (sensor == nullptr) {
-//             continue;
-//         }
-//         if (!sensor->has_data()) {
-//             continue;
-//         }
-//         hal.console->printf("All: device_%u type=%d status=%d distance=%f\n",
-//                             i,
-//                             (int)sensor->type(),
-//                             (int)sensor->status(),
-//                             sensor->distance());
-//         had_data = true;
-//     }
-//     if (!had_data) {
-//         hal.console->printf("All: no data on any sensor\n");
-//     }
-
-    // Delay between reads
-    // hal.scheduler->delay(100);
-    // strain.update();
-
-    // bool had_data = false;
-    // for (uint8_t i=0; i<1; i++) {
-    //     AP_Strain_Backend *sensor = strain.get_backend(i);
-    //     if (sensor == nullptr) {
-    //         continue;
-    //     }
-
-    //     hal.console->printf("val=%f\n",
-    //                         sensor->data());
-    //     had_data = true;
-    // }
-    // if (!had_data) {
-    //     hal.console->printf("All: no data on any sensor\n");
-    // }
+    
 }
 AP_HAL_MAIN();

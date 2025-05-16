@@ -25,11 +25,7 @@ public:
     // true if sensor is returning data
     bool has_data() const;
 
-    // Link function creates new smart pointer to I2CDevice
-    // bool link(uint8_t address);
 
-    // true if sensor is returning data
-    // bool has_data() const;
 
 private:
 
