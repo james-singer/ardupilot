@@ -42,20 +42,20 @@ void AP_Strain::init(void)
         return;
     }
     // ?? add checks to ensure the sensors are initalized correctly 
-    for (uint8_t i=0; i<STRAIN_MAX_INSTANCES; i++) {
-        sensors[i].status = Status::NotConnected;
-        sensors[i].healthy = false;
-        sensors[i].calibrated = false;
-        sensors[i].I2C_id = 0x9 + i;
-        // Want to dynamically allocate the bew backend object
-        // First need to obtain a smart pointer to an I2C Device
-        AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
-        // Need to dynamically allocate a new backend object
-        AP_Strain_Backend *temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], dev_temp);
-        drivers[i] = temp;
-        drivers[i]->init();
-        _num_sensors++;
-    }
+    // for (uint8_t i=0; i<STRAIN_MAX_INSTANCES; i++) {
+    //     sensors[i].status = Status::NotConnected;
+    //     sensors[i].healthy = false;
+    //     sensors[i].calibrated = false;
+    //     sensors[i].I2C_id = 0x9 + i;
+    //     // Want to dynamically allocate the bew backend object
+    //     // First need to obtain a smart pointer to an I2C Device
+    //     AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
+    //     // Need to dynamically allocate a new backend object
+    //     AP_Strain_Backend *temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], dev_temp);
+    //     drivers[i] = temp;
+    //     drivers[i]->init();
+    //     _num_sensors++;
+    // }
     // At this point we should haver all four entries in drivers pointed to initialized backend objects
 
     init_done = true;
