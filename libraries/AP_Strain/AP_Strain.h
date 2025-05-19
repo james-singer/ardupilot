@@ -11,6 +11,7 @@
 
 
 #define STRAIN_MAX_INSTANCES 1
+#define STRAIN_SENSORS 10
 #define BUS_NUMBER = 0
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
@@ -37,19 +38,25 @@ class AP_Strain
 
     // initialise the strain object, loading backend drivers
     void init(void);
+    
+    enum class Status {
+        NotConnected   = 0,
+        NoData         = 1,
+        Good           = 2,
+    };
 
     // update the strain object, asking backends to push data to
     // the frontend
     // void update(void);
 
-     // AP_Strain_Backend *get_backend(uint8_t id) const;
+// AP_Strain_Backend *get_backend(uint8_t id) const;
 
-    bool get_data(uint8_t instance, int32_t* data);
-    uint8_t get_status(uint8_t instance);
+    int32_t* get_data(uint8_t instance);
+    AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
 
     void reset();
-    void calibrate();
+    bool calibrate();
 
     // int32_t get_data(void) const { return get_data(_primary); }
     // int32_t get_data(uint8_t instance) const { return sensors[instance].data[1]; } //??????????????????????????????????????? fix array pointer 
@@ -72,18 +79,12 @@ class AP_Strain
     uint8_t _primary = 0;
     bool init_done = false;
 
-    enum class Status {
-        NotConnected   = 0,
-        NoData         = 1,
-        Good           = 2,
-    };
-
     struct sensor
     {
         uint32_t last_update_ms;        // last update time in ms
         uint32_t last_change_ms;        // last update time in ms that included a change in reading from previous readings
-        uint8_t num_data = 8;
-        int32_t data[8];                   // 10 strain gauge measurements
+        static const uint8_t num_data = STRAIN_SENSORS;
+        int32_t data[num_data];                   // 10 strain gauge measurements
         enum AP_Strain::Status status;
         uint8_t I2C_id;
         

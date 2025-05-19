@@ -51,8 +51,8 @@ void AP_Strain::init(void)
         sensors[i].status = Status::NotConnected;
         sensors[i].I2C_id = 0x9 + i;
 
-        AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
-        AP_Strain_Backend* backend_temp = = NEW_NOTHROW AP_Strain_Backend(_strain_arm, std::move(dev_temp));
+        AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(0, sensors[i].I2C_id);
+        AP_Strain_Backend* backend_temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], std::move(dev_temp));
         drivers[i] = backend_temp;
         drivers[i]->init();
 
@@ -64,21 +64,14 @@ void AP_Strain::init(void)
     // AP_HAL::panic("AP_Strain::init() not implemented");
 }
 
-bool AP_Strain::get_data(uint8_t instance, int32_t* data)
+int32_t* AP_Strain::get_data(uint8_t instance)
 {
-    if (sensors[instance].status == 2)
-    {
-        data = sensors[instance].data;
-        return true;
-    }
-    else
-    {
-        data = nullptr;
-        return false;
-    }
+
+    return sensors[instance].data;
+
 }
 
-uint8_t AP_Strain::get_status(uint8_t instance)
+AP_Strain::Status AP_Strain::get_status(uint8_t instance)
 {
     return sensors[instance].status;
 }
@@ -88,12 +81,18 @@ uint32_t AP_Strain::get_last_update(uint8_t instance)
     return sensors[instance].last_update_ms;
 }
 
-void AP_Strain::callibrate()
+bool AP_Strain::calibrate()
 {
+    bool all_calibrated = true;
     for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
-        drivers[i]->callibrate();
+        if (!drivers[i]->calibrate())
+        {
+            all_calibrated = false;
+            break;
+        }
     }
+    return all_calibrated;
 }
 
 void AP_Strain::reset()

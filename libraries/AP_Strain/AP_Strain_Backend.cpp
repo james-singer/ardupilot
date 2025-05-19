@@ -47,7 +47,7 @@ void AP_Strain_Backend::timer(void)
     // } else {
     //     set_status(AP_Strain::Status::NoData);
     // }
-    bool has_sem = _dev->get_semaphore()->take(100);
+    bool has_sem = _dev->get_semaphore()->take(50);
     if (has_sem)
     {
         if (!get_reading())
@@ -80,7 +80,7 @@ bool AP_Strain_Backend::get_reading()
     int32_t time_last = _sensor.last_update_ms;
 
     // Create the buffer
-    uint8_t buffer[40];
+    uint8_t buffer[_sensor.num_data*4];
 
     // Write "P" to sensor
     uint8_t poll = 0x50;
@@ -103,7 +103,10 @@ bool AP_Strain_Backend::get_reading()
     for (uint8_t i = 0; i < _sensor.num_data; i++)
     {
         // For each sensor, combine the four bytes to form a 32 bit signed integer (assuming little endian)
-        _sensor.data[i] = (int32_t) buffer[i*4] | ((int32_t) buffer[i*4+1] << 8) | ((int32_t) buffer[i*4+2] << 16) | ((int32_t) buffer[i*4+3] << 24);
+        _sensor.data[i] = (int32_t) buffer[i*4]  |
+                 ((int32_t) buffer[i*4+1] << 8)  | 
+                 ((int32_t) buffer[i*4+2] << 16) | 
+                 ((int32_t) buffer[i*4+3] << 24);
     }
     uint32_t current_time = AP_HAL::millis();
     _sensor.last_update_ms = current_time;
@@ -179,22 +182,32 @@ bool AP_Strain_Backend::has_data() const {
 }
 
 
-void AP_Strain_Backend::callibrate()
+bool AP_Strain_Backend::calibrate()
 {
     // Objective send the byte 'Z' to the sensor
-    bool has_sem = _dev->get_semaphore()->take(100);
+    uint8_t zero = 0x5A;
+    const uint8_t* zero_a = &zero;
+    
+    bool has_sem = _dev->get_semaphore()->take(20);
     if (has_sem)
     {
-        uint8_t msg = 0x59;
-        if (!write_bytes(&msg, 1))
+        if (!_dev->transfer(zero_a, 1,NULL, 0)) 
         {
-            // Error writing bytes
+            // Writing to sensor failed
+            _dev->get_semaphore()->give(); 
+            return false;
         }
-        _dev->get_semaphore()->give();        
+        else
+        {
+            // Writing to sensor failed
+            _dev->get_semaphore()->give(); 
+            return true;
+        }   
     }
     else
     {
-        // Error getting semaphore
+        // Failed to get semaphore
+        return false;
     }
 }
 

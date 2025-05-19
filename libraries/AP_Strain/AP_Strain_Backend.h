@@ -25,7 +25,7 @@ public:
     bool has_data() const;
 
     void reset(void);
-    void callibrate(void);
+    bool calibrate(void);
 
 
 

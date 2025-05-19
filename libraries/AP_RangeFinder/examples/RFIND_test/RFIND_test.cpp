@@ -25,9 +25,9 @@ static RangeFinder sonar;
 
 static AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = nullptr;
 static AP_Strain strain;
-static uint8_t poll = 0x50;
+// static uint8_t poll = 0x50;
 
-
+int32_t count = 0;
 void setup()
 {
 
@@ -47,15 +47,33 @@ void setup()
 
 void loop()
 {  
-    
-    int32_t data[8];
+    // if (count++ > 100)
+    // {
+    //     count = 0;
+    //     if (strain.calibrate())
+    //     {
+    //         hal.console->printf("zeroing\n");
+    //         hal.scheduler->delay(10);
+    //     }
+    //     else
+    //     {
+    //         hal.console->printf("failed to zeroing\n");
+    //         hal.scheduler->delay(10);
+    //     }
+    // }
 
-    strain.get_data(0, data);
-    for (uint8_t i = 0; i < 8; i++)
+    int32_t* data = strain.get_data(0);
+    uint32_t last_update = strain.get_last_update(0);
+
+    hal.console->printf("----------------------------------\n");
+    hal.console->printf("time: %ld\n", last_update);
+    for (uint8_t i = 0; i < 10; i++)
     {
-        hal.console->printf("Strain gauge %d: %d\n", i+1, data[i]);
+        hal.console->printf("Strain gauge %d: %ld\n", i+1, data[i]);
+
     }
-    // hal.scheduler->delay(100);
+    hal.console->printf("----------------------------------\n");
+    hal.scheduler->delay(100);
     // hal.console->printf("Strain test #############################################################################\n");
     // bool has_own = dev_temp->get_semaphore()->take(100);
     // // hal.console->printf("dev_temp = %d\n", dev_temp->get_bus_address());
