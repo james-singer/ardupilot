@@ -11,6 +11,7 @@
 
 
 #define STRAIN_MAX_INSTANCES 1
+#define BUS_NUMBER = 0
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
@@ -39,16 +40,23 @@ class AP_Strain
 
     // update the strain object, asking backends to push data to
     // the frontend
-    void update(void);
+    // void update(void);
 
-    AP_Strain_Backend *get_backend(uint8_t id) const;
+     // AP_Strain_Backend *get_backend(uint8_t id) const;
 
-    int32_t get_data(void) const { return get_data(_primary); }
-    int32_t get_data(uint8_t instance) const { return sensors[instance].data; } //??????????????????????????????????????? fix array pointer 
+    bool get_data(uint8_t instance, int32_t* data);
+    uint8_t get_status(uint8_t instance);
+    uint32_t get_last_update(uint8_t instance);
+
+    void reset();
+    void calibrate();
+
+    // int32_t get_data(void) const { return get_data(_primary); }
+    // int32_t get_data(uint8_t instance) const { return sensors[instance].data[1]; } //??????????????????????????????????????? fix array pointer 
 
     // get last time sample was taken (in ms)
-    uint32_t get_last_update(void) const { return get_last_update(_primary); }
-    uint32_t get_last_update(uint8_t instance) const { return sensors[instance].last_update_ms; }
+    // uint32_t get_last_update(void) const { return get_last_update(_primary); }
+    // uint32_t get_last_update(uint8_t instance) const { return sensors[instance].last_update_ms; }
 
     // void calibrate(bool save=true);
 
@@ -74,8 +82,8 @@ class AP_Strain
     {
         uint32_t last_update_ms;        // last update time in ms
         uint32_t last_change_ms;        // last update time in ms that included a change in reading from previous readings
-        uint8_t num_data = 10;
-        int32_t data[10];                   // 10 strain gauge measurements
+        uint8_t num_data = 8;
+        int32_t data[8];                   // 10 strain gauge measurements
         enum AP_Strain::Status status;
         uint8_t I2C_id;
         

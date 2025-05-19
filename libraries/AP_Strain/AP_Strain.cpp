@@ -18,7 +18,6 @@
 #include <AP_GPS/AP_GPS.h>
 #include <AP_Vehicle/AP_Vehicle.h>
 
-#define BUS_NUMBER 3
 
 
 extern const AP_HAL::HAL& hal;
@@ -41,50 +40,93 @@ void AP_Strain::init(void)
         // don't re-init if we've found some sensors already
         return;
     }
-    // ?? add checks to ensure the sensors are initalized correctly 
-    // for (uint8_t i=0; i<STRAIN_MAX_INSTANCES; i++) {
-    //     sensors[i].status = Status::NotConnected;
-    //     sensors[i].healthy = false;
-    //     sensors[i].calibrated = false;
-    //     sensors[i].I2C_id = 0x9 + i;
-    //     // Want to dynamically allocate the bew backend object
-    //     // First need to obtain a smart pointer to an I2C Device
-    //     AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
-    //     // Need to dynamically allocate a new backend object
-    //     AP_Strain_Backend *temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], dev_temp);
-    //     drivers[i] = temp;
-    //     drivers[i]->init();
-    //     _num_sensors++;
-    // }
-    // At this point we should haver all four entries in drivers pointed to initialized backend objects
+
+    // TODO:
+    //      - Loop through and set all sensor data members to default values
+    //      - Obtain a OwnPtr to I2CDevice object
+    //      - Use the OwnPtr and the current entry in the sensor array to dynamically allocate and construct a new backend object
+    //      - Call init on the new backend object 
+    for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
+    {
+        sensors[i].status = Status::NotConnected;
+        sensors[i].I2C_id = 0x9 + i;
+
+        AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(BUS_NUMBER, sensors[i].I2C_id);
+        AP_Strain_Backend* backend_temp = = NEW_NOTHROW AP_Strain_Backend(_strain_arm, std::move(dev_temp));
+        drivers[i] = backend_temp;
+        drivers[i]->init();
+
+        _num_sensors++;
+    }
+
 
     init_done = true;
     // AP_HAL::panic("AP_Strain::init() not implemented");
 }
 
-void AP_Strain::update(void)
+bool AP_Strain::get_data(uint8_t instance, int32_t* data)
 {
-    for (uint8_t i=0; i<_num_sensors; i++) {
-        if (drivers[i] != nullptr) {
-            drivers[i]->update();
-        }
+    if (sensors[instance].status == 2)
+    {
+        data = sensors[instance].data;
+        return true;
     }
-
-    // add logging // TODO
-    // Log_Strain();
+    else
+    {
+        data = nullptr;
+        return false;
+    }
 }
 
-AP_Strain_Backend *AP_Strain::get_backend(uint8_t id) const {
-    if (id >= STRAIN_MAX_INSTANCES) {
-        return nullptr;
+uint8_t AP_Strain::get_status(uint8_t instance)
+{
+    return sensors[instance].status;
+}
+
+uint32_t AP_Strain::get_last_update(uint8_t instance)
+{
+    return sensors[instance].last_update_ms;
+}
+
+void AP_Strain::callibrate()
+{
+    for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
+    {
+        drivers[i]->callibrate();
     }
-    if (drivers[id] != nullptr) {
-        
-        return nullptr;
-        
+}
+
+void AP_Strain::reset()
+{
+    for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
+    {
+        drivers[i]->reset();
     }
-    return drivers[id];
-};
+}
+
+// void AP_Strain::update(void)
+// {
+//     for (uint8_t i=0; i<_num_sensors; i++) {
+//         if (drivers[i] != nullptr) {
+//             drivers[i]->update();
+//         }
+//     }
+
+//     // add logging // TODO
+//     // Log_Strain();
+// }
+
+// AP_Strain_Backend *AP_Strain::get_backend(uint8_t id) const {
+//     if (id >= STRAIN_MAX_INSTANCES) {
+//         return nullptr;
+//     }
+//     if (drivers[id] != nullptr) {
+        
+//         return nullptr;
+        
+//     }
+//     return drivers[id];
+// };
 
 // zero the strain sensors 
 // void AP_Strain::calibrate(void)

@@ -5,25 +5,27 @@
 #include <AP_HAL/Semaphores.h>
 #include <AP_HAL/I2CDevice.h>
 
-#define BUS_NUMBER 3
 
 class AP_Strain_Backend
 {
 public:
     AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev);
     
-    static AP_Strain_Backend *detect(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev);
+    // static AP_Strain_Backend *detect(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev);
     
     bool init();
 
     // each driver must provide an update method to copy accumulated
     // data to the frontend
-    void update(void);
+    // void update(void);
 
     float data() const { return 1.0f; }
 
     // true if sensor is returning data
     bool has_data() const;
+
+    void reset(void);
+    void callibrate(void);
 
 
 
@@ -33,7 +35,7 @@ private:
     AP_Strain::sensor &_sensor;
 
     // semaphore for access to shared frontend data
-    HAL_Semaphore _sem;
+    // HAL_Semaphore _sem;
 
     AP_HAL::OwnPtr<AP_HAL::I2CDevice> _dev;
 
@@ -45,7 +47,7 @@ private:
 
     void timer();
 
-    bool get_reading(AP_Strain::sensor &sensor);
+    bool get_reading();
     
     // bool strain_parse_stream(uint8_t *stream_buf,
     //     size_t *p_num_processed_chars,
