@@ -53,7 +53,7 @@ void loop()
     strain.get_data(0, data);
     for (uint8_t i = 0; i < 8; i++)
     {
-        hal.console->printf("Strain gauge %s: %d\n", i, data[i]);
+        hal.console->printf("Strain gauge %d: %d\n", i+1, data[i]);
     }
     // hal.scheduler->delay(100);
     // hal.console->printf("Strain test #############################################################################\n");
