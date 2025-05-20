@@ -96,7 +96,7 @@ struct PACKED log_Strain {
     int32_t    data_8;
     int32_t    data_9;
 };
-
+// created by Ian 
 void Copter::Log_Write_Strain()
 {
  
@@ -533,7 +533,7 @@ const struct LogStructure Copter::log_structure[] = {
 
 
 // @LoggerMessage: STRN 
-// created by Ian
+// created by Ian 
     { LOG_STRAIN_MSG, sizeof(log_Strain),
         "STRN", "QIiiiiiiiiii",  "TimeUS,DTime,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9", "s-----------", "F-----------" },
     

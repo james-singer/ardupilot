@@ -338,7 +338,7 @@ protected:
     AP_GPS gps;
 #endif
     AP_Baro barometer;
-
+    // created by Ian 
     AP_Strain strain;
 
 #if AP_COMPASS_ENABLED

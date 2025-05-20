@@ -217,7 +217,7 @@ void AP_Strain_Backend::reset()
     bool has_sem = _dev->get_semaphore()->take(100);
     if (has_sem)
     {
-        uint8_t msg = 0x52;
+        uint8_t msg = 0x59;
         if (!write_bytes(&msg, 1))
         {
             // Error writing bytes
