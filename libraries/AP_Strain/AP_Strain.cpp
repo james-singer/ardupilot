@@ -59,7 +59,7 @@ void AP_Strain::init(void)
         _num_sensors++;
     }
 
-
+    
     init_done = true;
     // AP_HAL::panic("AP_Strain::init() not implemented");
 }

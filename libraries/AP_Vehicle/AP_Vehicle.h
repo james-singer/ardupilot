@@ -24,7 +24,7 @@
  */
 
 #include "ModeReason.h" // reasons can't be defined in this header due to circular loops
-
+#include <AP_Strain/AP_Strain.h>
 #include <AP_AHRS/AP_AHRS.h>
 #include <AP_AccelCal/AP_AccelCal.h>
 #include <AP_Airspeed/AP_Airspeed.h>
@@ -338,6 +338,9 @@ protected:
     AP_GPS gps;
 #endif
     AP_Baro barometer;
+
+    AP_Strain strain;
+
 #if AP_COMPASS_ENABLED
     Compass compass;
 #endif

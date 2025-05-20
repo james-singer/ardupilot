@@ -113,6 +113,11 @@ void Copter::init_ardupilot()
     camera_mount.init();
 #endif
 
+    // Ian added this to the Copter class
+    strain.init();
+    strain.calibrate();
+
+
 #if AP_CAMERA_ENABLED
     // initialise camera
     camera.init();

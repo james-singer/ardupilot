@@ -749,6 +749,8 @@ void Copter::twentyfive_hz_logging()
     if (should_log(MASK_LOG_IMU)) {
         AP::ins().Write_IMU();
         }     
+    // Ian 
+    Log_Write_Strain();
 }
 
 #endif  // HAL_LOGGING_ENABLED

@@ -72,6 +72,7 @@
 #include <AP_OpticalFlow/AP_OpticalFlow.h>
 #include <AP_Winch/AP_Winch_config.h>
 #include <AP_SurfaceDistance/AP_SurfaceDistance.h>
+#include <AP_Strain/AP_Strain_Backend.h>
 
 // Configuration
 #include "defines.h"
@@ -482,6 +483,7 @@ private:
     AC_PosControl *pos_control;
     AC_WPNav *wp_nav;
     AC_Loiter *loiter_nav;
+
 
 #if AC_CUSTOMCONTROL_MULTI_ENABLED
     AC_CustomControl custom_control{ahrs_view, attitude_control, motors, scheduler.get_loop_period_s()};
@@ -903,6 +905,7 @@ private:
     uint8_t get_num_log_structures() const override;
 
     // Log.cpp
+    void Log_Write_Strain(); // Ian // added for logging strain
     void Log_Write_Control_Tuning();
     void Log_Write_Attitude();
     void Log_Write_Rate();

@@ -80,6 +80,46 @@ void Copter::Log_Write_Control_Tuning()
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
 
+
+struct PACKED log_Strain {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    uint32_t data_time;
+    int32_t    data_0;
+    int32_t    data_1;
+    int32_t    data_2;
+    int32_t    data_3;
+    int32_t    data_4;
+    int32_t    data_5;
+    int32_t    data_6;
+    int32_t    data_7;
+    int32_t    data_8;
+    int32_t    data_9;
+};
+
+void Copter::Log_Write_Strain()
+{
+ 
+    int32_t *strain_data = strain.get_data(0);  // Get data from first instance
+    
+    struct log_Strain pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG),
+        time_us             : AP_HAL::micros64(),
+        data_time          : AP_HAL::millis(),
+        data_0             : strain_data[0],
+        data_1             : strain_data[1],
+        data_2             : strain_data[2],
+        data_3             : strain_data[3],
+        data_4             : strain_data[4],
+        data_5             : strain_data[5],
+        data_6             : strain_data[6],
+        data_7             : strain_data[7],
+        data_8             : strain_data[8],
+        data_9             : strain_data[9]
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
 // Write an attitude packet
 void Copter::Log_Write_Attitude()
 {
@@ -423,6 +463,10 @@ void Copter::Log_Write_Rate_Thread_Dt(float dt, float dtAvg, float dtMax, float 
 #endif
 }
 
+// Ian
+// Define LOG_STRAIN_MSG with a unique identifier
+
+
 // type and unit information can be found in
 // libraries/AP_Logger/Logstructure.h; search for "log_Units" for
 // units and "Format characters" for field type information
@@ -486,6 +530,13 @@ const struct LogStructure Copter::log_structure[] = {
 // @Field: TimeUS: Time since system startup
 // @Field: Id: Data type identifier
 // @Field: Value: Value
+
+
+// @LoggerMessage: STRN 
+// created by Ian
+    { LOG_STRAIN_MSG, sizeof(log_Strain),
+        "STRN", "QIiiiiiiiiii",  "TimeUS,DTime,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9", "s-----------", "F-----------" },
+    
 
 // ,Alt,BAlt,DSAlt,
 
