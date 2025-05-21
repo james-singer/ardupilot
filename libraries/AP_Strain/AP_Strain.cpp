@@ -81,26 +81,41 @@ uint32_t AP_Strain::get_last_update(uint8_t instance)
     return sensors[instance].last_update_ms;
 }
 
-bool AP_Strain::calibrate()
+bool AP_Strain::calibrate_all()
 {
-    bool all_calibrated = true;
     for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
         if (!drivers[i]->calibrate())
         {
-            all_calibrated = false;
-            break;
+            return false;
         }
     }
-    return all_calibrated;
+    return true;
 }
 
-void AP_Strain::reset()
+bool AP_Strain::reset_all()
 {
     for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
-        drivers[i]->reset();
+        if(!drivers[i]->reset())
+        {
+            return false;
+        }
     }
+    return true;
+}
+
+bool AP_Strain::get_status_all()
+{
+    // Iterate through all sensors and return false if the status of any sensor is NotConnected or Bad
+    for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
+    {
+        if (sensors[i].status == Status::NoData || sensors[i].status == Status::NotConnected)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 // void AP_Strain::update(void)

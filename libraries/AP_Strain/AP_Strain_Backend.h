@@ -9,7 +9,7 @@
 class AP_Strain_Backend
 {
 public:
-    AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev);
+    AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev, AP_Strain* singleton);
     
     // static AP_Strain_Backend *detect(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev);
     
@@ -24,7 +24,7 @@ public:
     // true if sensor is returning data
     bool has_data() const;
 
-    void reset(void);
+    bool reset(void);
     bool calibrate(void);
 
 
@@ -33,6 +33,7 @@ private:
 
     // reference to shared data struct
     AP_Strain::sensor &_sensor;
+    AP_Strain* _singleton;
 
     // semaphore for access to shared frontend data
     // HAL_Semaphore _sem;
@@ -43,11 +44,13 @@ private:
     static void set_status(AP_Strain::sensor &_strain_arg, AP_Strain::Status status);
     void set_status(AP_Strain::Status status) { set_status(_sensor, status); }
 
-    bool write_bytes(uint8_t *write_buf_u8, uint32_t len_u8);
+    bool write_byte(uint8_t write_byte);
 
     void timer();
 
     bool get_reading();
+
+    void update_last_change_ms(bool reset);
     
     // bool strain_parse_stream(uint8_t *stream_buf,
     //     size_t *p_num_processed_chars,
@@ -56,4 +59,4 @@ private:
 
     // AP_HAL::OwnPtr<AP_HAL::I2CDevice> _dev;
 
-}; 
+};

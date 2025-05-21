@@ -11,15 +11,17 @@
 extern const AP_HAL::HAL& hal;
 
 // constructor
-AP_Strain_Backend::AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev) : 
+AP_Strain_Backend::AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev, AP_Strain* singleton) : 
+    _singleton(singleton),
     _sensor(_strain_arm),
     _dev(std::move(dev)) {}
 
 ////////// private
 
-bool AP_Strain_Backend::write_bytes(uint8_t *write_buf_u8, uint32_t len_u8)
+bool AP_Strain_Backend::write_byte(uint8_t write_byte)
 {
-    return _dev->transfer(write_buf_u8, len_u8, NULL, 0);
+    uint8_t msg = write_byte;
+    return _dev->transfer(&msg, sizeof(msg), NULL, 0);
 }
 
 
@@ -31,9 +33,9 @@ bool AP_Strain_Backend::init()
     // call timer() at 80Hz
     _dev->register_periodic_callback(12500, FUNCTOR_BIND_MEMBER(&AP_Strain_Backend::timer, void));
     
-    uint8_t send_msg = 0x50;
+    // uint8_t send_msg = 0x50;
     
-    if (!write_bytes(&send_msg, 1)) {
+    if (!write_byte(0x50)) {
         return false;
     }
 
@@ -47,28 +49,92 @@ void AP_Strain_Backend::timer(void)
     // } else {
     //     set_status(AP_Strain::Status::NoData);
     // }
-    bool has_sem = _dev->get_semaphore()->take(50);
+
+    // Boolean read will be used throughout the function
+    bool read = false;
+
+    // Store the old data
+    // Joe - Eventually we might want to check data from all strain gauges before arming
+    // For now, we will assume either all sensors are working or none of them are working
+    int32_t last_data = _sensor.data[0];
+    int32_t last_time = _sensor.last_update_ms;
+
+    // Get the semaphore
+    bool has_sem = _dev->get_semaphore()->take(100);
     if (has_sem)
     {
-        if (!get_reading())
-        {
-            _sensor.status = AP_Strain::Status::NotConnected;
-        }
-        else if (_sensor.last_change_ms > TIMEOUT)
-        {
-            _sensor.status = AP_Strain::Status::NoData;
-        }
-        else
-        {
-            _sensor.status = AP_Strain::Status::Good;
-        } 
+        // If we have the semaphore, call get_reading and store the return value in read
+        read = get_reading();
         _dev->get_semaphore()->give();
     }
+    // Key note here: do not worry about the case where we fail to get semaphore... setting read to false by default will handle this case
+    // If read returned true, it means we successfully read in data (possibly bad data, but that will be handled later)
+    // Set the status
+    if (read)
+    {
+        _sensor.status = AP_Strain::Status::Good;
+    }
+    // If read returned false, either our writing poll to sensor or reading data from sensor failed (or potentially we did not get the semaphore)
     else
     {
-        // Failed to get semaphore
-        return;
+        _sensor.status = AP_Strain::Status::NotConnected;
     }
+
+    // If the sensor data did not change, we need to call update_last_change_ms with the argument as false to extend the last change time
+    if (_sensor.data[0] == last_data)
+    {
+        update_last_change_ms(false);
+    }
+    // Otherwise, reset the last change time to zero by calling update_last_change_ms with the argument as true
+    else
+    {
+        update_last_change_ms(true);
+    }
+
+    // Final check: if last change time is greater than timeout, we need to reset the arm and calibrate all sensors
+    if (_sensor.last_change_ms > TIMEOUT)
+    {
+        // Reset method will send 'R' to this particular arm ONLY
+        reset();
+        // Calling front end method will calibrate ALL strain arms
+        _singleton->calibrate_all();
+        _sensor.status = AP_Strain::Status::NoData;    
+    }
+
+    // Old code:
+    // if (has_sem)
+    // {
+    //     if (!get_reading())
+    //     {
+    //         _sensor.status = AP_Strain::Status::NotConnected;
+    //     }
+    //     else if (_sensor.last_change_ms > TIMEOUT)
+    //     {
+    //         _sensor.status = AP_Strain::Status::NoData;
+            
+    //     }
+    //     else
+    //     {
+    //         _sensor.status = AP_Strain::Status::Good;
+    //     } 
+    //     _dev->get_semaphore()->give();
+    // }
+    // else
+    // {
+    //     // Failed to get semaphore
+    //     // Joe - Update last change time
+    // }
+
+    // // Joe - Check if last change is too large and if so set global armed flag and reset/calibrate
+}
+
+void AP_Strain_Backend::update_last_change_ms(bool reset)
+{
+    // If the boolean argument is true, reset the last change time to 0
+    if (reset)
+        _sensor.last_change_ms = 0;
+    else
+        _sensor.last_change_ms += AP_HAL::millis() - _sensor.last_update_ms;
 }
 
 //////////////////////////////////////// TODO - implement get reading and parse stream
@@ -76,18 +142,20 @@ void AP_Strain_Backend::timer(void)
 bool AP_Strain_Backend::get_reading()
 {
 
-    int32_t data_last = _sensor.data[0];
-    int32_t time_last = _sensor.last_update_ms;
+    // Joe - commenting out... old data now stored and checked in timer
+    // int32_t data_last = _sensor.data[0];
+    // int32_t time_last = _sensor.last_update_ms;
 
     // Create the buffer
     uint8_t buffer[_sensor.num_data*4];
 
     // Write "P" to sensor
-    uint8_t poll = 0x50;
-    const uint8_t* poll_a = &poll;
-    if (!_dev->transfer(poll_a, 1,NULL, 0)) 
+    // uint8_t poll = 0x50;
+    // const uint8_t* poll_a = &poll;
+    if (!write_byte(0x50)) 
     {
         // Writing to sensor failed
+        // Return false and deal with it in timer
         return false;
     }
 
@@ -95,6 +163,7 @@ bool AP_Strain_Backend::get_reading()
     if (!_dev->read(buffer, sizeof(buffer)))
     {
         // Reading from sensor failed
+        // Return false and deal with it in timer
         return false;
     }
 
@@ -111,14 +180,15 @@ bool AP_Strain_Backend::get_reading()
     uint32_t current_time = AP_HAL::millis();
     _sensor.last_update_ms = current_time;
 
-    if (data_last == _sensor.data[0])
-    {
-        _sensor.last_change_ms += current_time - time_last;
-    }
-    else
-    {
-        _sensor.last_change_ms = 0;
-    }
+    // Joe - commenting out here... sensor last change time now updated in timer
+    // if (data_last == _sensor.data[0])
+    // {
+    //     _sensor.last_change_ms += current_time - time_last;
+    // }
+    // else
+    // {
+    //     _sensor.last_change_ms = 0;
+    // }
     return true;
 
     // uint8_t buffer[4]; // Buffer to hold the 4 bytes read from the I2C bus
@@ -185,13 +255,13 @@ bool AP_Strain_Backend::has_data() const {
 bool AP_Strain_Backend::calibrate()
 {
     // Objective send the byte 'Z' to the sensor
-    uint8_t zero = 0x5A;
-    const uint8_t* zero_a = &zero;
+    // uint8_t zero = 0x5A;
+    // const uint8_t* zero_a = &zero;
     
     bool has_sem = _dev->get_semaphore()->take(20);
     if (has_sem)
     {
-        if (!_dev->transfer(zero_a, 1,NULL, 0)) 
+        if (!write_byte(0x5A)) 
         {
             // Writing to sensor failed
             _dev->get_semaphore()->give(); 
@@ -211,22 +281,31 @@ bool AP_Strain_Backend::calibrate()
     }
 }
 
-void AP_Strain_Backend::reset()
+bool AP_Strain_Backend::reset()
 {
     // Objective send the byte 'R' to the sensor
-    bool has_sem = _dev->get_semaphore()->take(100);
+    bool has_sem = _dev->get_semaphore()->take(50);
     if (has_sem)
     {
         uint8_t msg = 0x59;
-        if (!write_bytes(&msg, 1))
+        if (!write_byte(0x59))
         {
             // Error writing bytes
+            _dev->get_semaphore()->give();  
+            return false;
+        }      
+        else
+        {
+            // Successfully wrote 'R' to sensor
+            _dev->get_semaphore()->give();
+            return true;
         }
-        _dev->get_semaphore()->give();        
     }
     else
     {
         // Error getting semaphore
+        // What else to do here?
+        return false;
     }
 
 }

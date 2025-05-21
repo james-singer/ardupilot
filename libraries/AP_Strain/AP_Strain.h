@@ -55,8 +55,9 @@ class AP_Strain
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
 
-    void reset();
-    bool calibrate();
+    bool reset_all();
+    bool calibrate_all();
+    bool get_status_all();
 
     // int32_t get_data(void) const { return get_data(_primary); }
     // int32_t get_data(uint8_t instance) const { return sensors[instance].data[1]; } //??????????????????????????????????????? fix array pointer 
