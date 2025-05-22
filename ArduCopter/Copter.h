@@ -218,6 +218,7 @@ public:
     friend class ModeLand;
     friend class ModeLoiter;
     friend class ModePosHold;
+    friend class ModePosHoldStrain;
     friend class ModeRTL;
     friend class ModeSmartRTL;
     friend class ModeSport;
@@ -1107,6 +1108,10 @@ private:
 #endif
 #if MODE_TURTLE_ENABLED
     ModeTurtle mode_turtle;
+#endif
+// Joe - new PosHold mode 
+#if MODE_POSHOLD_STRAIN_ENABLED
+    ModePosHoldStrain mode_poshold_strain;
 #endif
 
     // mode.cpp

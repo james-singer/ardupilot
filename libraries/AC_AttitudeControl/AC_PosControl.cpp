@@ -1068,6 +1068,13 @@ void AC_PosControl::update_z_controller()
 }
 
 
+// Joe - update_z_controller_strain 
+void AC_PosControl::update_z_controller_strain()
+{
+
+}
+
+
 ///
 /// Accessors
 ///
