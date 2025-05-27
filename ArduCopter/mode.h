@@ -100,7 +100,7 @@ public:
         AUTOROTATE =   26,  // Autonomous autorotation
         AUTO_RTL =     27,  // Auto RTL, this is not a true mode, AUTO will report as this mode if entered to perform a DO_LAND_START Landing sequence
         TURTLE =       28,  // Flip over after crash
-        POSHOLD_STRAIN = 50 // automatic position hold with strain controller
+        POSHOLD_STRAIN = 29 // automatic position hold with strain controller
 
         // Mode number 30 reserved for "offboard" for external/lua control.
 
@@ -1440,7 +1440,7 @@ class ModePosHoldStrain : public Mode {
 public:
     // inherit constructor
     using Mode::Mode;
-    Number mode_number() const override { return Number::POSHOLD; }
+    Number mode_number() const override { return Number::POSHOLD_STRAIN; }
 
     bool init(bool ignore_checks) override;
     void run() override;
@@ -1455,8 +1455,8 @@ public:
 
 protected:
 
-    const char *name() const override { return "POSHOLD"; }
-    const char *name4() const override { return "PHLD"; }
+    const char *name() const override { return "POSHOLDSTRAIN"; }
+    const char *name4() const override { return "PHLDSTRN"; }
 
 private:
 

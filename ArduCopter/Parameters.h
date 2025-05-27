@@ -310,7 +310,7 @@ public:
         k_param_rc_12_old,
         k_param_failsafe_gcs,
         k_param_rcmap, // 199
-
+        // Joe
         //
         // 200: flight modes
         //
@@ -433,6 +433,7 @@ public:
     AP_Int16        failsafe_throttle_value;
     AP_Int16        throttle_deadzone;
 
+    // Joe
     // Flight modes
     //
     AP_Int8         flight_mode1;
