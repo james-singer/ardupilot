@@ -13,6 +13,7 @@
 #include <AP_InertialNav/AP_InertialNav.h>  // Inertial Navigation library
 #include <AP_Scripting/AP_Scripting_config.h>
 #include "AC_AttitudeControl.h"     // Attitude control library
+#include <AP_Strain/AP_Strain.h>  // Add this with other includes at the top
 
 #include <AP_Logger/LogStructure.h>
 
@@ -42,7 +43,7 @@ public:
 
     /// Constructor
     AC_PosControl(AP_AHRS_View& ahrs, const AP_InertialNav& inav,
-                  const class AP_Motors& motors, AC_AttitudeControl& attitude_control);
+                  const class AP_Motors& motors, AC_AttitudeControl& attitude_control , AP_Strain& strain);
 
     // do not allow copying
     CLASS_NO_COPY(AC_PosControl);
@@ -523,6 +524,7 @@ protected:
     const AP_InertialNav&   _inav;
     const class AP_Motors&  _motors;
     AC_AttitudeControl&     _attitude_control;
+    AP_Strain&              _strain;
 
     // parameters
     AP_Float        _lean_angle_max;    // Maximum autopilot commanded angle (in degrees). Set to zero for Angle Max

@@ -339,16 +339,18 @@ const AP_Param::GroupInfo AC_PosControl::var_info[] = {
 // their values.
 //
 AC_PosControl::AC_PosControl(AP_AHRS_View& ahrs, const AP_InertialNav& inav,
-                             const AP_Motors& motors, AC_AttitudeControl& attitude_control) :
+                             const AP_Motors& motors, AC_AttitudeControl& attitude_control, AP_Strain& strain) :
     _ahrs(ahrs),
     _inav(inav),
     _motors(motors),
     _attitude_control(attitude_control),
+    _strain(strain),
     _p_pos_xy(POSCONTROL_POS_XY_P),
     _p_pos_z(POSCONTROL_POS_Z_P),
     _pid_vel_xy(POSCONTROL_VEL_XY_P, POSCONTROL_VEL_XY_I, POSCONTROL_VEL_XY_D, 0.0f, POSCONTROL_VEL_XY_IMAX, POSCONTROL_VEL_XY_FILT_HZ, POSCONTROL_VEL_XY_FILT_D_HZ),
     _pid_vel_z(POSCONTROL_VEL_Z_P, 0.0f, 0.0f, 0.0f, POSCONTROL_VEL_Z_IMAX, POSCONTROL_VEL_Z_FILT_HZ, POSCONTROL_VEL_Z_FILT_D_HZ),
     _pid_accel_z(POSCONTROL_ACC_Z_P, POSCONTROL_ACC_Z_I, POSCONTROL_ACC_Z_D, 0.0f, POSCONTROL_ACC_Z_IMAX, 0.0f, POSCONTROL_ACC_Z_FILT_HZ, 0.0f),
+    _pid_strain_z(POSCONTROL_STRAIN_Z_P, POSCONTROL_STRAIN_Z_I, POSCONTROL_STRAIN_Z_D, 0.0f, POSCONTROL_STRAIN_Z_IMAX, 0.0f, POSCONTROL_STRAIN_Z_FILT_HZ, 0.0f),
     _vel_max_xy_cms(POSCONTROL_SPEED),
     _vel_max_up_cms(POSCONTROL_SPEED_UP),
     _vel_max_down_cms(POSCONTROL_SPEED_DOWN),
@@ -1123,10 +1125,10 @@ void AC_PosControl::update_z_controller_strain()
     // Calculate vertical acceleration
     const float z_accel_meas = get_z_accel_cmss();
 
-    // ensure imax is always large enough to overpower hover throttle
-    if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {
-        _pid_accel_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
-    }
+    // // ensure imax is always large enough to overpower hover throttle
+    // if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {
+    //     _pid_accel_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
+    // }
     float thr_out;
     if (_vibe_comp_enabled) {
         thr_out = get_throttle_with_vibration_override();
@@ -1135,9 +1137,30 @@ void AC_PosControl::update_z_controller_strain()
         thr_out += _pid_accel_z.get_ff() * 0.001f;
     }
 
-    // Strain Controller
 
+    // Strain Controller 
+    // Ian 
+    // TODO make this less clunky such that it does not just use thr_out
+    _strain_target = thr_out;
 
+    // TODO make a get number of sensors a function in the strain class
+    const int32_t STRAIN_SENSORS  = 10;
+
+    // gets the average strain from the strain sensors
+    const int32_t* strain_data = _strain.get_data(0);
+    float sum = 0;
+    for(int i = 0; i < STRAIN_SENSORS; i++) {
+        sum += strain_data[i];
+    }
+    const float strain_meas = sum / STRAIN_SENSORS;
+    
+
+    // ensure imax is always large enough to overpower hover throttle
+    if (_motors.get_throttle_hover() * 1000.0f > _pid_strain_z.imax()) {
+        _pid_strain_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
+    }
+
+    thr_out = _pid_strain_z.update_all(_strain_target, z_strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     thr_out += _motors.get_throttle_hover();
 
     // Actuator commands

@@ -8,7 +8,7 @@
  */
 
 #define POSHOLD_SPEED_0                         10      // speed below which it is always safe to switch to loiter
-
+// test 
 // 400hz loop update rate
 #define POSHOLD_BRAKE_TIME_ESTIMATE_MAX         (600*4) // max number of cycles the brake will be applied before we switch to loiter
 #define POSHOLD_BRAKE_TO_LOITER_TIMER           (150*4) // Number of cycles to transition from brake mode to loiter mode.  Must be lower than POSHOLD_LOITER_STAB_TIMER
