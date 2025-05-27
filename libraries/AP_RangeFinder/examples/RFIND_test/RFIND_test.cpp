@@ -35,7 +35,7 @@ void setup()
     hal.scheduler->delay(100);
     hal.console->printf("Strain test\n");
     strain.init();
-    strain.calibrate();
+    strain.calibrate_all();
     // dev_temp = hal.i2c_mgr->get_device(0, 0x09);
     // dev_temp->set_retries(2);
     // dev_temp->set_speed(AP_HAL::Device::SPEED_HIGH);

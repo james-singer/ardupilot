@@ -12,7 +12,7 @@ extern const AP_HAL::HAL& hal;
 
 // constructor
 AP_Strain_Backend::AP_Strain_Backend(AP_Strain::sensor &_strain_arm, AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev, AP_Strain* singleton) : 
-    _singleton(singleton),
+    _frontEnd(singleton),
     _sensor(_strain_arm),
     _dev(std::move(dev)) {}
 
@@ -83,12 +83,12 @@ void AP_Strain_Backend::timer(void)
     // If the sensor data did not change, we need to call update_last_change_ms with the argument as false to extend the last change time
     if (_sensor.data[0] == last_data)
     {
-        update_last_change_ms(false);
+        update_last_change_ms(false , last_time);
     }
     // Otherwise, reset the last change time to zero by calling update_last_change_ms with the argument as true
     else
     {
-        update_last_change_ms(true);
+        update_last_change_ms(true , last_time);
     }
 
     // Final check: if last change time is greater than timeout, we need to reset the arm and calibrate all sensors
@@ -97,7 +97,7 @@ void AP_Strain_Backend::timer(void)
         // Reset method will send 'R' to this particular arm ONLY
         reset();
         // Calling front end method will calibrate ALL strain arms
-        _singleton->calibrate_all();
+        _frontEnd->calibrate_all();
         _sensor.status = AP_Strain::Status::NoData;    
     }
 
@@ -128,13 +128,13 @@ void AP_Strain_Backend::timer(void)
     // // Joe - Check if last change is too large and if so set global armed flag and reset/calibrate
 }
 
-void AP_Strain_Backend::update_last_change_ms(bool reset)
+void AP_Strain_Backend::update_last_change_ms(bool reset, int32_t last_time)
 {
     // If the boolean argument is true, reset the last change time to 0
     if (reset)
         _sensor.last_change_ms = 0;
     else
-        _sensor.last_change_ms += AP_HAL::millis() - _sensor.last_update_ms;
+        _sensor.last_change_ms += AP_HAL::millis() - last_time;
 }
 
 //////////////////////////////////////// TODO - implement get reading and parse stream
@@ -255,13 +255,13 @@ bool AP_Strain_Backend::has_data() const {
 bool AP_Strain_Backend::calibrate()
 {
     // Objective send the byte 'Z' to the sensor
-    // uint8_t zero = 0x5A;
+    uint8_t zero = 0x5A;
     // const uint8_t* zero_a = &zero;
     
     bool has_sem = _dev->get_semaphore()->take(20);
     if (has_sem)
     {
-        if (!write_byte(0x5A)) 
+        if (!write_byte(zero)) 
         {
             // Writing to sensor failed
             _dev->get_semaphore()->give(); 
@@ -288,7 +288,7 @@ bool AP_Strain_Backend::reset()
     if (has_sem)
     {
         uint8_t msg = 0x59;
-        if (!write_byte(0x59))
+        if (!write_byte(msg))
         {
             // Error writing bytes
             _dev->get_semaphore()->give();  

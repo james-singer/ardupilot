@@ -32,8 +32,8 @@ public:
 private:
 
     // reference to shared data struct
+    AP_Strain* _frontEnd;
     AP_Strain::sensor &_sensor;
-    AP_Strain* _singleton;
 
     // semaphore for access to shared frontend data
     // HAL_Semaphore _sem;
@@ -50,7 +50,7 @@ private:
 
     bool get_reading();
 
-    void update_last_change_ms(bool reset);
+    void update_last_change_ms(bool reset,int32_t last_time);
     
     // bool strain_parse_stream(uint8_t *stream_buf,
     //     size_t *p_num_processed_chars,

@@ -154,7 +154,7 @@ Mode *Copter::mode_from_mode_num(const Mode::Number mode)
 #endif
 
 #if MODE_POSHOLD_STRAIN_ENABLED
-        case Mode::Number::POSHOLD_STRAIN
+        case Mode::Number::POSHOLD_STRAIN:
             return &mode_poshold_strain;
 #endif
 
