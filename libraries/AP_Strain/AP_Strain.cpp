@@ -71,6 +71,22 @@ int32_t* AP_Strain::get_data(uint8_t instance)
 
 }
 
+float AP_Strain::get_avg_data(uint8_t instance)
+{
+    float sum = 0.0;
+    const int32_t* strain_data = sensors[instance].data;
+    for (int i = 0; i < STRAIN_SENSORS; i++)
+    {
+        sum += strain_data[i];
+    } 
+    return sum/STRAIN_SENSORS;
+}
+
+uint8_t AP_Strain::get_num_sensors()
+{
+    return _num_sensors;
+}
+
 AP_Strain::Status AP_Strain::get_status(uint8_t instance)
 {
     return sensors[instance].status;
