@@ -1141,10 +1141,9 @@ void AC_PosControl::update_z_controller_strain()
     // Strain Controller 
     // Ian 
     // TODO make this less clunky such that it does not just use thr_out
-    _strain_target = thr_out;
+    float _strain_target = thr_out;
 
     // TODO make a get number of sensors a function in the strain class
-    const int32_t STRAIN_SENSORS  = 10;
 
     // gets the average strain from the strain sensors
     const int32_t* strain_data = _strain.get_data(0);
@@ -1160,7 +1159,7 @@ void AC_PosControl::update_z_controller_strain()
         _pid_strain_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
     }
 
-    thr_out = _pid_strain_z.update_all(_strain_target, z_strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
+    thr_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     thr_out += _motors.get_throttle_hover();
 
     // Actuator commands
