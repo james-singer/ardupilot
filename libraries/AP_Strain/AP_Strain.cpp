@@ -82,6 +82,11 @@ float AP_Strain::get_avg_data(uint8_t instance)
     return sum/STRAIN_SENSORS;
 }
 
+float get_scaled_avg_data(uint8_t instance)
+{
+    return get_avg_data(instance) / SENSOR_SCALE_FACTOR;
+}
+
 uint8_t AP_Strain::get_num_sensors()
 {
     return _num_sensors;

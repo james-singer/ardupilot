@@ -13,6 +13,7 @@
 #define STRAIN_MAX_INSTANCES 1
 #define STRAIN_SENSORS 10
 #define BUS_NUMBER = 0
+#define SENSOR_SCALE_FACTOR 5000
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
@@ -53,6 +54,7 @@ class AP_Strain
 
     int32_t* get_data(uint8_t instance);
     float get_avg_data(uint8_t instance);
+    float get_scaled_avg_data(uint8_t instance);
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
