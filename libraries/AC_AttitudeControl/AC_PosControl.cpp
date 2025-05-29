@@ -1243,7 +1243,7 @@ void AC_PosControl::update_z_controller_disturbance()
         thr_out += _pid_accel_z.get_ff() * 0.001f;
     }
     // Joe - Introduce disturbance by reducing the throttle hover
-    thr_out += 0.99f * _motors.get_throttle_hover();
+    thr_out += 0.50f * _motors.get_throttle_hover();
 
     // Actuator commands
 
