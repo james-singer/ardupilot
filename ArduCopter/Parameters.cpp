@@ -282,7 +282,7 @@ const AP_Param::Info Copter::var_info[] = {
     // @CopyFieldsFrom: FLTMODE1
     // @DisplayName: Flight Mode 6
     // @Description: Flight mode when pwm of Flightmode channel(FLTMODE_CH) is >=1750
-    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)FLIGHT_MODE_6),
+    GSCALAR(flight_mode6, "FLTMODE6",               (uint8_t)29),
 
     // @Param: FLTMODE_CH
     // @DisplayName: Flightmode channel
