@@ -101,5 +101,5 @@ void ModeAltHold::run()
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
 
     // run the vertical position controller and set output throttle
-    pos_control->update_z_controller_disturbance();
+    pos_control->update_z_controller();
 }
