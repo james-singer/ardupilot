@@ -246,7 +246,7 @@ public:
     void update_z_controller_strain();
 
     // Joe - update_z_controller_disturbance adds the disturbance
-    void update_z_controller_disturbance();
+    void update_z_controller_disturbance(float disturbance_multiplier);
 
 
 

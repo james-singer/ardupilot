@@ -17,7 +17,8 @@ bool ModeSport::init(bool ignore_checks)
     // set vertical speed and acceleration limits
     pos_control->set_max_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
     pos_control->set_correction_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
-
+    disturbance_time = 0.0f;
+    disturbance.init();
     return true;
     // // set vertical speed and acceleration limits
     // pos_control->set_max_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
@@ -109,9 +110,10 @@ void ModeSport::run()
 
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
-
+    disturbance_time += G_Dt;
+    float multiplier = disturbance.update(disturbance_time);
     // run the vertical position controller and set output throttle
-    pos_control->update_z_controller_disturbance();
+    pos_control->update_z_controller_disturbance(multiplier);
 //     // set vertical speed and acceleration limits
 //     pos_control->set_max_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
 

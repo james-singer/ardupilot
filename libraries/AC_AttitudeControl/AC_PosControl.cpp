@@ -1185,7 +1185,7 @@ void AC_PosControl::update_z_controller_strain()
 }
 
 // Joe - update_z_controller_disturbance is a copy of update_z_controller with the throttle hover value manipulated to introduce a step disturbance
-void AC_PosControl::update_z_controller_disturbance()
+void AC_PosControl::update_z_controller_disturbance(float disturbance_multiplier)
 {
     // check for ekf z-axis position reset
     handle_ekf_z_reset();
@@ -1243,7 +1243,7 @@ void AC_PosControl::update_z_controller_disturbance()
         thr_out += _pid_accel_z.get_ff() * 0.001f;
     }
     // Joe - Introduce disturbance by reducing the throttle hover
-    // thr_out += 0.5f * _motors.get_throttle_hover();
+    thr_out += disturbance_multiplier * _motors.get_throttle_hover();
 
     // Actuator commands
 

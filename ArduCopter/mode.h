@@ -2,6 +2,7 @@
 
 #include "Copter.h"
 #include <AP_Math/chirp.h>
+#include <AP_Math/disturbance.h>
 #include <AP_ExternalControl/AP_ExternalControl_config.h> // TODO why is this needed if Copter.h includes this
 
 #if AP_COPTER_ADVANCED_FAILSAFE_ENABLED
@@ -1716,6 +1717,8 @@ public:
     bool has_user_takeoff(bool must_navigate) const override {
         return !must_navigate;
     }
+    Disturbance disturbance;
+    float disturbance_time;
 
 protected:
 
