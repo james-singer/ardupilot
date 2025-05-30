@@ -25,7 +25,7 @@ private:
     bool complete;
 
     // Total chirp length in seconds
-    float timespan = 0.01;
+    float timespan = 1.0f;
 
     float time_delay = 5.0f;
 
