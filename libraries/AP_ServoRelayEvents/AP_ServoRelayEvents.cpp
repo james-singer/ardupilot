@@ -82,9 +82,19 @@ bool AP_ServoRelayEvents::do_set_relay(uint8_t relay_num, uint8_t state)
         // cancel previous repeat
         repeat = 0;
     }
+
+    // If relay is being turned ON and hasn't been calibrated yet
+    if (state == 1 && !strain_calibrated) {
+        // Get strain reference and calibrate
+        AP_Strain &strain = AP::strain();
+        strain.calibrate_all();
+        strain_calibrated = true;
+    }
+
     if (state == 1) {
         relay->on(relay_num);
     } else if (state == 0) {
+        strain_calibrated = false;
         relay->off(relay_num);
     } else {
         relay->toggle(relay_num);

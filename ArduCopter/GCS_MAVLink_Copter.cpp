@@ -82,7 +82,6 @@ MAV_STATE GCS_MAVLINK_Copter::vehicle_system_status() const
     return MAV_STATE_ACTIVE;
 }
 
-
 void GCS_MAVLINK_Copter::send_attitude_target()
 {
     const Quaternion quat  = copter.attitude_control->get_attitude_target_quat();
