@@ -46,11 +46,6 @@ class AP_Strain
         Good           = 2,
     };
 
-    // update the strain object, asking backends to push data to
-    // the frontend
-    // void update(void);
-
-// AP_Strain_Backend *get_backend(uint8_t id) const;
 
     int32_t* get_data(uint8_t instance);
     float get_avg_data(uint8_t instance);
@@ -64,14 +59,6 @@ class AP_Strain
     bool get_status_all();
 
     uint16_t get_num_calibrations() const { return num_cal; }
-    // int32_t get_data(void) const { return get_data(_primary); }
-    // int32_t get_data(uint8_t instance) const { return sensors[instance].data[1]; } //??????????????????????????????????????? fix array pointer 
-
-    // get last time sample was taken (in ms)
-    // uint32_t get_last_update(void) const { return get_last_update(_primary); }
-    // uint32_t get_last_update(uint8_t instance) const { return sensors[instance].last_update_ms; }
-
-    // void calibrate(bool save=true);
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////// 
