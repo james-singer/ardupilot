@@ -20,6 +20,7 @@
 #if AP_GRIPPER_ENABLED
 
 #include <AP_Param/AP_Param.h>
+#include <AP_Strain/AP_Strain.h> 
 
 class AP_Gripper_Backend;
 
@@ -38,6 +39,8 @@ public:
 
     // initialise the gripper
     void init();
+
+    void set_strain(AP_Strain* strain);
 
     // grab - move the servo to the grab position
     void grab();
@@ -85,6 +88,8 @@ public:
 private:
 
     AP_Gripper_Backend *backend;
+
+    AP_Strain* strain; 
 };
 
 namespace AP {

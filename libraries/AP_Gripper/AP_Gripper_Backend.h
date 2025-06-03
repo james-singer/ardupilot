@@ -30,6 +30,9 @@ public:
     // update - should be called at at least 10hz
     void update();
 
+    // set strain sensor reference
+    virtual void set_strain(AP_Strain* strain) = 0;
+
     // grab - move the servo to the grab position
     virtual void grab() = 0;
 

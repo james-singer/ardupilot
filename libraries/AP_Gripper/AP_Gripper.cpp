@@ -129,6 +129,16 @@ void AP_Gripper::init()
     }
 }
 
+void AP_Gripper::set_strain(AP_Strain* _strain) 
+{
+    if (!enabled()) {
+        return;
+    }
+    if (backend != nullptr) {
+        backend->set_strain(_strain);
+    }
+}
+
 // update - should be called at at least 10hz
 #define PASS_TO_BACKEND(function_name) \
     void AP_Gripper::function_name()   \

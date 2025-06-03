@@ -117,6 +117,10 @@ void Copter::init_ardupilot()
     strain.init();
     strain.calibrate_all();
 
+    // sets up the rc switch for calibration
+    gripper.set_strain(&strain);
+    
+
 
 #if AP_CAMERA_ENABLED
     // initialise camera

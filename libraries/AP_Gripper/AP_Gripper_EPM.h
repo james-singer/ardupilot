@@ -27,6 +27,9 @@ class AP_Gripper_EPM : public AP_Gripper_Backend {
 public:
     AP_Gripper_EPM(struct AP_Gripper::Backend_Config &_config);
 
+    // set strain sensor reference - EPM doesn't use strain sensing
+    void set_strain(AP_Strain* strain) override {};
+
     // initialise the EPM
     void        init_gripper() override;
 

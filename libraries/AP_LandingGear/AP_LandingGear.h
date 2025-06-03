@@ -18,7 +18,6 @@ public:
         // setup parameter defaults
         AP_Param::setup_object_defaults(this, var_info);
         
-        strain_calibrated(false)  // Ian
         if (_singleton != nullptr) {
             AP_HAL::panic("AP_LandingGear must be singleton");
         }
@@ -99,9 +98,6 @@ private:
     AP_Int16    _retract_alt;
     AP_Int16    _options;
 
-    // Ian
-    // Add new member to track if calibration has occurred
-    bool strain_calibrated;
 
     // bitmask of options
     enum class Option : uint16_t {
