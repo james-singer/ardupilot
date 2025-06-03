@@ -7,24 +7,24 @@ public:
     // constructor
     Disturbance();
 
-    // initializes the chirp object
+    // initializes the disturbance object
     void init();
 
-    // determine chirp signal output at the specified time and amplitude
+    // determine disturbance signal output at the specified time and amplitude
     float update(float time);
 
-    // Return true if chirp is completed
+    // Return true if disturbance is completed
     bool completed() const { return complete; }
 
 private:
 
-    // output of chirp signal at the requested time
+    // output of disturbance signal at the requested time
     float output;
 
-    // True if chirp is complete, reset to false on init
+    // True if disturbance is complete, reset to false on init
     bool complete;
 
-    // Total chirp length in seconds
+    // Total disturbance length in seconds
     float timespan = 0.8f;
 
     float time_delay = 5.0f;
