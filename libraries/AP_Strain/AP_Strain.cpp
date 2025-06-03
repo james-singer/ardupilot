@@ -59,6 +59,7 @@ void AP_Strain::init(void)
         _num_sensors++;
     }
 
+    num_cal = 0;
     
     init_done = true;
     // AP_HAL::panic("AP_Strain::init() not implemented");
@@ -111,6 +112,7 @@ bool AP_Strain::calibrate_all()
             return false;
         }
     }
+    num_cal++;
     return true;
 }
 
@@ -138,78 +140,6 @@ bool AP_Strain::get_status_all()
     }
     return true;
 }
-
-// void AP_Strain::update(void)
-// {
-//     for (uint8_t i=0; i<_num_sensors; i++) {
-//         if (drivers[i] != nullptr) {
-//             drivers[i]->update();
-//         }
-//     }
-
-//     // add logging // TODO
-//     // Log_Strain();
-// }
-
-// AP_Strain_Backend *AP_Strain::get_backend(uint8_t id) const {
-//     if (id >= STRAIN_MAX_INSTANCES) {
-//         return nullptr;
-//     }
-//     if (drivers[id] != nullptr) {
-        
-//         return nullptr;
-        
-//     }
-//     return drivers[id];
-// };
-
-// zero the strain sensors 
-// void AP_Strain::calibrate(void)
-// {
-//     for (uint8_t i=0; i<num_instances; i++) {
-//         if (drivers[i] != nullptr) {
-//             drivers[i]->calibrate();
-//         }
-//     }
-// }
-
-// adds backend driver to the front end object
-// bool AP_Strain::_add_backend(AP_Strain_Backend *backend , uint8_t instance)
-// {
-//     if (!backend) {
-//         return false;
-//     }
-//     if (instance >= STRAIN_MAX_INSTANCES) {
-//         AP_HAL::panic("Too many Strain drivers");
-//     }
-//     if (drivers[instance] != nullptr) 
-//     {
-//         // we've allocated the same instance twice
-//         INTERNAL_ERROR(AP_InternalError::error_t::flow_of_control);
-//     }
-//     drivers[instance] = backend;
-//     _num_sensors = MAX(_num_sensors, instance+1);
-//     return true;
-// }
-
-// void AP_Strain::detect_instance(uint8_t instance)
-// {
-    
-//     #ifndef HAL_BUILD_AP_PERIPH
-//     if (!hal.util->was_watchdog_armed()) 
-//     {
-//         hal.scheduler->delay(100);
-//     }
-//     #endif
-
-//     FOREACH_I2C(i) 
-//     {
-//         if (_add_backend(AP_Strain_Backend::detect(sensors[instance],hal.i2c_mgr->get_device(i, sensors[instance].I2C_id)), instance)) 
-//         {
-//             break;
-//         }
-//     }
-// }
 
 namespace AP {
 

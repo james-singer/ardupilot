@@ -63,6 +63,7 @@ class AP_Strain
     bool calibrate_all();
     bool get_status_all();
 
+    uint16_t get_num_calibrations() const { return num_cal; }
     // int32_t get_data(void) const { return get_data(_primary); }
     // int32_t get_data(uint8_t instance) const { return sensors[instance].data[1]; } //??????????????????????????????????????? fix array pointer 
 
@@ -83,6 +84,8 @@ class AP_Strain
     uint8_t _num_sensors = 0;
     uint8_t _primary = 0;
     bool init_done = false;
+
+    uint16_t num_cal = 0; // number of calibrations done
 
     struct sensor
     {

@@ -95,6 +95,8 @@ struct PACKED log_Strain {
     int32_t    data_7;
     int32_t    data_8;
     int32_t    data_9;
+    uint16_t   num_calibrations;
+    float      avg_data;
 };
 // created by Ian 
 void Copter::Log_Write_Strain()
@@ -106,7 +108,7 @@ void Copter::Log_Write_Strain()
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG),
         time_us             : AP_HAL::micros64(),
         data_time          : AP_HAL::millis(),
-        data_0             : strain_data[0],
+        data_0             : strain_data[0], // gets individual strain data from the first instance
         data_1             : strain_data[1],
         data_2             : strain_data[2],
         data_3             : strain_data[3],
@@ -115,7 +117,9 @@ void Copter::Log_Write_Strain()
         data_6             : strain_data[6],
         data_7             : strain_data[7],
         data_8             : strain_data[8],
-        data_9             : strain_data[9]
+        data_9             : strain_data[9],
+        num_calibrations   : strain.get_num_calibrations(), // Gets the number of calibrations done
+        avg_data           : strain.get_scaled_avg_data(0) // Get average data from first instance   
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -534,8 +538,9 @@ const struct LogStructure Copter::log_structure[] = {
 
 // @LoggerMessage: STRN 
 // created by Ian 
+
     { LOG_STRAIN_MSG, sizeof(log_Strain),
-        "STRN", "QIiiiiiiiiii",  "TimeUS,DTime,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9", "s-----------", "F-----------" },
+        "STRN", "QIiiiiiiiiiHf",  "TimeUS,DTime,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,cal,avg", "s-----------", "F-----------" },
     
 
 // ,Alt,BAlt,DSAlt,
