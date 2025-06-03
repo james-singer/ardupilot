@@ -1,6 +1,6 @@
 #include "AP_LandingGear.h"
 
-#if AP_LANDINGGEAR_ENABLED
+// #if AP_LANDINGGEAR_ENABLED
 
 #include <AP_Math/AP_Math.h>
 #include <SRV_Channel/SRV_Channel.h>
@@ -256,7 +256,8 @@ void AP_LandingGear::update(float height_above_ground_m)
         last_gear_event_ms = 0;
 
         // If there was no pilot input and state is still unknown - leave it as it is
-        if (gear_state_current != LG_UNKNOWN) {
+        if (gear_state_current != LG_UNKNOWN) 
+        {
             gear_state_current = (_deployed == true ? LG_DEPLOYED : LG_RETRACTED);
         }
     } else {
@@ -340,4 +341,4 @@ void AP_LandingGear::deploy_for_landing()
     }
 }
 
-#endif
+// #endif
