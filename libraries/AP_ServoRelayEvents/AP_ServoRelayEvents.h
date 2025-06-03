@@ -12,14 +12,12 @@
 
 #include <AP_Param/AP_Param.h>
 #include <AP_Relay/AP_Relay.h>
-#include <AP_Strain/AP_Strain.h>  // Ian
 
 class AP_ServoRelayEvents {
 public:
     AP_ServoRelayEvents()
 #if AP_RELAY_ENABLED
-    : type(EVENT_TYPE_RELAY),
-      strain_calibrated(false)  // Ian
+        : type(EVENT_TYPE_RELAY)
 #endif
     {
         _singleton = this;
@@ -43,8 +41,6 @@ public:
 
 private:
 
-
-
     static AP_ServoRelayEvents *_singleton;
 
     // event control state
@@ -56,10 +52,6 @@ private:
     };
 
     enum event_type type;
-
-    // Ian
-    // Add new member to track if calibration has occurred
-    bool strain_calibrated;
 
 	// when the event was started in ms
     uint32_t start_time_ms;
