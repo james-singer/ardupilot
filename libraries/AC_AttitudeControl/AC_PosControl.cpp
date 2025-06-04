@@ -51,7 +51,7 @@ extern const AP_HAL::HAL& hal;
 #else
  // default gains for Copter / TradHeli
  # define POSCONTROL_POS_Z_P                    1.0f    // vertical position controller P gain default
- # define POSCONTROL_VEL_Z_P                    5.0f    // vertical velocity controller P gain default
+ # define POSCONTROL_VEL_Z_P                    0.5f    // vertical velocity controller P gain default
  # define POSCONTROL_VEL_Z_IMAX                 1000.0f // vertical velocity controller IMAX gain default
  # define POSCONTROL_VEL_Z_FILT_HZ              5.0f    // vertical velocity controller input filter
  # define POSCONTROL_VEL_Z_FILT_D_HZ            5.0f    // vertical velocity controller input filter for D
@@ -1243,7 +1243,7 @@ void AC_PosControl::update_z_controller_disturbance(float disturbance_multiplier
         thr_out += _pid_accel_z.get_ff() * 0.001f;
     }
     // Joe - Introduce disturbance by reducing the throttle hover
-    thr_out = _accel_target.z * (0.04);
+    thr_out = _accel_target.z;
     thr_out += _motors.get_throttle_hover();
     thr_out *= disturbance_multiplier;
 
