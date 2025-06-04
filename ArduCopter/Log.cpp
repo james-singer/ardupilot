@@ -17,11 +17,8 @@ struct PACKED log_Control_Tuning {
     float    yaw_desired;
     float    throttle_hover;
     float    desired_alt;
-    // float    inav_alt;
-    // int32_t  baro_alt;
-    // float    desired_rangefinder_alt;
-    float    rangefinder_alt;
-    float    terr_alt;
+    float    z_accel;
+    float    desired_z_accel;
     int16_t  target_climb_rate;
     int16_t  climb_rate;
 };
@@ -65,16 +62,8 @@ void Copter::Log_Write_Control_Tuning()
         yaw_desired         : motors->get_yaw() + motors->get_yaw_ff(),
         throttle_hover      : motors->get_throttle_hover(),
         desired_alt         : des_alt_m,
-        // inav_alt            : inertial_nav.get_position_z_up_cm() * 0.01f,
-        // baro_alt            : baro_alt,
-        // desired_rangefinder_alt : desired_rangefinder_alt,
-        
-#if AP_RANGEFINDER_ENABLED
-        rangefinder_alt     : surface_tracking.get_dist_for_logging(),
-#else
-        rangefinder_alt     : AP::logger().quiet_nanf(),
-#endif
-        terr_alt            : pos_control->get_accel_target_cmss().z,
+        z_accel             : pos_control->get_z_accel_cmss(),
+        desired_z_accel     : pos_control->get_accel_target_cmss().z,
         target_climb_rate   : target_climb_rate_cms,
         climb_rate          : int16_t(inertial_nav.get_velocity_z_up_cms()) // float -> int16_t
     };
@@ -548,7 +537,7 @@ const struct LogStructure Copter::log_structure[] = {
 // ,Alt,BAlt,DSAlt,
 
     { LOG_CONTROL_TUNING_MSG, sizeof(log_Control_Tuning),
-      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,Roll,Pitch,Yaw,ThH,DAlt,SAlt,TAcc,DCRt,CRt", "s----mmmmmmnn", "F----00B000BB" , true },
+      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,Roll,Pitch,Yaw,ThH,DAlt,ACc,DAcc,DCRt,CRt", "s----mmmmmmnn", "F----00B000BB" , true },
     { LOG_DATA_INT16_MSG, sizeof(log_Data_Int16t),         
       "D16",   "QBh",         "TimeUS,Id,Value", "s--", "F--" },
     { LOG_DATA_UINT16_MSG, sizeof(log_Data_UInt16t),         
