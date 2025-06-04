@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include "AP_Vehicle.h"
 
 #if MODE_SPORT_ENABLED
 
@@ -20,8 +21,7 @@ bool ModeSport::init(bool ignore_checks)
     disturbance_time = 0.0f;
     switch_time = 0.0f;
     disturbance.init();
-
-    // Temporary and to be reviewed: calibrate all sensors 
+    strain.calibrate_all();
     
     return true;
 }
@@ -108,7 +108,7 @@ void ModeSport::run()
     switch_time += G_Dt;
 
     // If we are within the mode switch delay time period, use the original z controller while the sensors are calibrated
-    if (switch_time - switch_delay < 0)
+    if ((switch_time - switch_delay < 0) || !strain.get_status_all())
     {
         pos_control->update_z_controller();
     }
