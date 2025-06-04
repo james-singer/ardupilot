@@ -18,7 +18,11 @@ bool ModeSport::init(bool ignore_checks)
     pos_control->set_max_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
     pos_control->set_correction_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
     disturbance_time = 0.0f;
+    switch_time = 0.0f;
     disturbance.init();
+
+    // Temporary and to be reviewed: calibrate all sensors 
+    
     return true;
 }
 
@@ -101,9 +105,20 @@ void ModeSport::run()
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
     disturbance_time += G_Dt;
-    float multiplier = disturbance.update(disturbance_time);
-    // run the vertical position controller and set output throttle
-    pos_control->update_z_controller_disturbance(multiplier);
+    switch_time += G_Dt;
+
+    // If we are within the mode switch delay time period, use the original z controller while the sensors are calibrated
+    if (switch_time - switch_delay < 0)
+    {
+        pos_control->update_z_controller();
+    }
+    // Otherwise, the sensors have had time to calibrate and thus we can use the new z controller
+    else
+    {
+        float multiplier = disturbance.update(disturbance_time);
+        pos_control->update_z_controller_disturbance(multiplier);
+    }
+
 }
 
 #endif

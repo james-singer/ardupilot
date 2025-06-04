@@ -1719,6 +1719,8 @@ public:
     }
     Disturbance disturbance;
     float disturbance_time;
+    float switch_delay = 2.0f;
+    float switch_time;
 
 protected:
 
