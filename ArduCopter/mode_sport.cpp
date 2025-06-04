@@ -1,5 +1,4 @@
 #include "Copter.h"
-#include "AP_Vehicle.h"
 
 #if MODE_SPORT_ENABLED
 
