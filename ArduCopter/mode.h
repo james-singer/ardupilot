@@ -1724,6 +1724,10 @@ public:
     Disturbance disturbance;
     float disturbance_time;
 
+    // Chirp chirp;
+    // float chirp_mag = 0.2f;
+    // float chirp_time;
+
 protected:
 
     const char *name() const override { return "SPORT"; }

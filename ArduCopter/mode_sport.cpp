@@ -19,6 +19,8 @@ bool ModeSport::init(bool ignore_checks)
     pos_control->set_correction_speed_accel_z(-get_pilot_speed_dn(), g.pilot_speed_up, g.pilot_accel_z);
     disturbance_time = 0.0f;
     disturbance.init();
+    // chirp_time = 0.0f;
+    // chirp.init();
     
     return true;
 }
@@ -101,6 +103,8 @@ void ModeSport::run()
 
     // call attitude controller
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(target_roll, target_pitch, target_yaw_rate);
+
+    // chirp_time += G_Dt;
     disturbance_time += G_Dt;
     float multiplier = disturbance.update(disturbance_time);
     pos_control->update_z_controller_disturbance(multiplier);
