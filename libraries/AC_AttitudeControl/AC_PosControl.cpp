@@ -1120,28 +1120,13 @@ void AC_PosControl::update_z_controller_strain()
     // add feed forward component
     _accel_target.z += _accel_desired.z + _accel_offset.z + _accel_terrain;
 
-    // Acceleration Controller
 
-    // Calculate vertical acceleration
-    const float z_accel_meas = get_z_accel_cmss();
-
-    // // ensure imax is always large enough to overpower hover throttle
-    // if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {
-    //     _pid_accel_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
-    // }
     float thr_out;
-    if (_vibe_comp_enabled) {
-        thr_out = get_throttle_with_vibration_override();
-    } else {
-        thr_out = _pid_accel_z.update_all(_accel_target.z, z_accel_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
-        thr_out += _pid_accel_z.get_ff() * 0.001f;
-    }
-
 
     // Strain Controller 
     // Ian 
     // TODO make this less clunky such that it does not just use thr_out
-    float _strain_target = thr_out;
+    float _strain_target = _accel_target.z * STRAIN_TARGET_GAIN;
 
     // TODO make a get number of sensors a function in the strain class
 
@@ -1225,7 +1210,7 @@ void AC_PosControl::update_z_controller_disturbance(float disturbance_multiplier
 
     // add feed forward component
     // _accel_target.z += _accel_desired.z + _accel_offset.z + _accel_terrain;
-    _accel_target.z *= 0.002f;
+    _accel_target.z *= STRAIN_TARGET_GAIN;
     // Acceleration Controller
 
     // Calculate vertical acceleration

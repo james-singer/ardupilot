@@ -37,6 +37,8 @@
 
 #define POSCONTROL_RELAX_TC                     0.16f   // This is used to decay the I term to 5% in half a second.
 
+#define STRAIN_TARGET_GAIN 0.002f
+
 class AC_PosControl
 {
 public:

@@ -48,8 +48,8 @@ class AP_Strain
 
 
     int32_t* get_data(uint8_t instance);
-    float get_avg_data(uint8_t instance);
-    float get_scaled_avg_data(uint8_t instance);
+    float get_avg_data();
+    float get_scaled_avg_data();
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);

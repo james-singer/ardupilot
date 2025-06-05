@@ -72,20 +72,26 @@ int32_t* AP_Strain::get_data(uint8_t instance)
 
 }
 
-float AP_Strain::get_avg_data(uint8_t instance)
+float AP_Strain::get_avg_data()
 {
     float sum = 0.0;
-    const int32_t* strain_data = sensors[instance].data;
-    for (int i = 0; i < STRAIN_SENSORS; i++)
+    uint8_t i;
+    uint8_t j;
+    int32_t* strain_data;
+    for (i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
-        sum += strain_data[i];
-    } 
-    return sum/STRAIN_SENSORS;
+        strain_data = sensors[i].data
+        for (j = 0; j < STRAIN_SENSORS; j++)
+        {
+            sum += strain_data[i];
+        }
+    }
+    return sum/(STRAIN_SENSORS * STRAIN_MAX_INSTANCES)
 }
 
-float AP_Strain::get_scaled_avg_data(uint8_t instance)
+float AP_Strain::get_scaled_avg_data()
 {
-    return get_avg_data(instance) / SENSOR_SCALE_FACTOR;
+    return get_avg_data() / SENSOR_SCALE_FACTOR;
 }
 
 uint8_t AP_Strain::get_num_sensors()
