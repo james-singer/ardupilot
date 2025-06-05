@@ -1131,12 +1131,14 @@ void AC_PosControl::update_z_controller_strain()
     // TODO make a get number of sensors a function in the strain class
 
     // gets the average strain from the strain sensors
-    const int32_t* strain_data = _strain.get_data(0);
-    float sum = 0;
-    for(int i = 0; i < STRAIN_SENSORS; i++) {
-        sum += strain_data[i];
-    }
-    const float strain_meas = sum / STRAIN_SENSORS;
+    float strain_meas = _strain.get_scaled_avg_data();
+
+    // const int32_t* strain_data = _strain.get_data(0);
+    // float sum = 0;
+    // for(int i = 0; i < STRAIN_SENSORS; i++) {
+    //     sum += strain_data[i];
+    // }
+    // const float strain_meas = sum / STRAIN_SENSORS;
     
 
     // ensure imax is always large enough to overpower hover throttle
