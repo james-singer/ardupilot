@@ -11,7 +11,7 @@
 
 
 #define STRAIN_MAX_INSTANCES 1
-#define STRAIN_SENSORS 10
+#define STRAIN_SENSORS 12
 #define BUS_NUMBER = 0
 #define SENSOR_SCALE_FACTOR 300000
 // timeouts for health reporting
