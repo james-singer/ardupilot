@@ -750,7 +750,8 @@ void Copter::twentyfive_hz_logging()
         AP::ins().Write_IMU();
         }     
     // Ian 
-    Log_Write_Strain();
+    Log_Write_Strain_1();
+    Log_Write_Strain_2();
 }
 
 #endif  // HAL_LOGGING_ENABLED

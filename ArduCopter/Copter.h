@@ -906,7 +906,8 @@ private:
     uint8_t get_num_log_structures() const override;
 
     // Log.cpp
-    void Log_Write_Strain(); // Ian // added for logging strain
+    void Log_Write_Strain_1(); // Ian // added for logging strain
+    void Log_Write_Strain_2(); // Ian // added for logging strain
     void Log_Write_Control_Tuning();
     void Log_Write_Attitude();
     void Log_Write_Rate();

@@ -71,45 +71,89 @@ void Copter::Log_Write_Control_Tuning()
 }
 
 
-struct PACKED log_Strain {
+struct PACKED log_Strain_1 {
     LOG_PACKET_HEADER;
     uint64_t time_us;
-    uint32_t data_time;
     int32_t    data_0;
     int32_t    data_1;
     int32_t    data_2;
     int32_t    data_3;
     int32_t    data_4;
     int32_t    data_5;
-    // int32_t    data_6;
-    // int32_t    data_7;
-    // int32_t    data_8;
-    // int32_t    data_9;
-    uint16_t   num_calibrations;
+    int32_t    data_6;
+    int32_t    data_7;
+    int32_t    data_8;
+    int32_t    data_9;
+    int32_t    data_10;
+    int32_t    data_11;
     float      avg_data;
 };
 // created by Ian 
-void Copter::Log_Write_Strain()
+void Copter::Log_Write_Strain_1()
 {
  
     int32_t *strain_data = strain.get_data(0);  // Get data from first instance
     
-    struct log_Strain pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG),
+    struct log_Strain_1 pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG_1),
         time_us             : AP_HAL::micros64(),
-        data_time          : AP_HAL::millis(),
         data_0             : strain_data[0], // gets individual strain data from the first instance
         data_1             : strain_data[1],
         data_2             : strain_data[2],
         data_3             : strain_data[3],
         data_4             : strain_data[4],
         data_5             : strain_data[5],
-        // data_6             : strain_data[6],
-        // data_7             : strain_data[7],
-        // data_8             : strain_data[8],
-        // data_9             : strain_data[9],
-        num_calibrations   : strain.get_num_calibrations(), // Gets the number of calibrations done
-        avg_data           : strain.get_scaled_avg_data(0) // Get average data from first instance   
+        data_6             : strain_data[6],
+        data_7             : strain_data[7],
+        data_8             : strain_data[8],
+        data_9             : strain_data[9],
+        data_10             : strain_data[10],
+        data_11             : strain_data[11],
+        avg_data           : strain.get_scaled_avg_data() // Get average data from first instance   
+    };
+    logger.WriteBlock(&pkt, sizeof(pkt));
+}
+
+
+struct PACKED log_Strain_2 {
+    LOG_PACKET_HEADER;
+    uint64_t time_us;
+    int32_t    data_0;
+    int32_t    data_1;
+    int32_t    data_2;
+    int32_t    data_3;
+    int32_t    data_4;
+    int32_t    data_5;
+    int32_t    data_6;
+    int32_t    data_7;
+    int32_t    data_8;
+    int32_t    data_9;
+    int32_t    data_10;
+    int32_t    data_11;
+    uint16_t   numCal;
+};
+// created by Ian 
+void Copter::Log_Write_Strain_2()
+{
+ 
+    int32_t *strain_data = strain.get_data(1);  // Get data from first instance
+    
+    struct log_Strain_2 pkt = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG_2),
+        time_us             : AP_HAL::micros64(),
+        data_0             : strain_data[0], // gets individual strain data from the first instance
+        data_1             : strain_data[1],
+        data_2             : strain_data[2],
+        data_3             : strain_data[3],
+        data_4             : strain_data[4],
+        data_5             : strain_data[5],
+        data_6             : strain_data[6],
+        data_7             : strain_data[7],
+        data_8             : strain_data[8],
+        data_9             : strain_data[9],
+        data_10            : strain_data[10],
+        data_11            : strain_data[11],
+        numCal             : strain.get_num_calibrations() 
     };
     logger.WriteBlock(&pkt, sizeof(pkt));
 }
@@ -528,16 +572,19 @@ const struct LogStructure Copter::log_structure[] = {
 
 // @LoggerMessage: STRN 
 // created by Ian 
-// ,D6,D7,D8,D9
 
-    { LOG_STRAIN_MSG, sizeof(log_Strain),
-        "STRN", "QIiiiiiiHf",  "TimeUS,DTime,D0,D1,D2,D3,D4,D5,cal,avg", "s-----------", "F-----------" },
+
+    { LOG_STRAIN_MSG_1, sizeof(log_Strain_1),
+        "STR1", "Qiiiiiiiiiiiif", "TimeUS,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,avg", "s-------------", "F-------------" },
+    
+    { LOG_STRAIN_MSG_2, sizeof(log_Strain_2),
+        "STR2", "QiiiiiiiiiiiiH", "TimeUS,D0,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,cal", "s-------------", "F-------------" },
     
 
 // ,Alt,BAlt,DSAlt,
 
     { LOG_CONTROL_TUNING_MSG, sizeof(log_Control_Tuning),
-      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,Roll,Pitch,Yaw,ThH,DAlt,ACc,DAcc,DCRt,CRt", "s----mmmmmmnn", "F----00B000BB" , true },
+      "CTUN", "Qffffffefffhh", "TimeUS,ThI,ABst,ThO,Roll,Pitch,Yaw,ThH,DAlt,ACc,DAcc,DCRt,CRt", "s----mmmmmmnn", "F----000000BB" , true },
     { LOG_DATA_INT16_MSG, sizeof(log_Data_Int16t),         
       "D16",   "QBh",         "TimeUS,Id,Value", "s--", "F--" },
     { LOG_DATA_UINT16_MSG, sizeof(log_Data_UInt16t),         

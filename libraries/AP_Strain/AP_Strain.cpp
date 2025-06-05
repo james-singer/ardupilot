@@ -80,13 +80,13 @@ float AP_Strain::get_avg_data()
     int32_t* strain_data;
     for (i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
-        strain_data = sensors[i].data
-        for (j = 0; j < STRAIN_SENSORS; j++)
+        strain_data = sensors[i].data;
+        for(j = 0; j < STRAIN_SENSORS; j++)
         {
             sum += strain_data[i];
         }
     }
-    return sum/(STRAIN_SENSORS * STRAIN_MAX_INSTANCES)
+    return sum/(STRAIN_SENSORS * STRAIN_MAX_INSTANCES);
 }
 
 float AP_Strain::get_scaled_avg_data()

@@ -25,14 +25,13 @@ static RangeFinder sonar;
 
 static AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = nullptr;
 static AP_Strain strain;
-// static uint8_t poll = 0x50;
 
 int32_t count = 0;
 void setup()
 {
 
     // strain
-    hal.scheduler->delay(100);
+    hal.scheduler->delay(5000);
     hal.console->printf("Strain test\n");
     strain.init();
     strain.calibrate_all();
@@ -47,27 +46,13 @@ void setup()
 
 void loop()
 {  
-    // if (count++ > 100)
-    // {
-    //     count = 0;
-    //     if (strain.calibrate())
-    //     {
-    //         hal.console->printf("zeroing\n");
-    //         hal.scheduler->delay(10);
-    //     }
-    //     else
-    //     {
-    //         hal.console->printf("failed to zeroing\n");
-    //         hal.scheduler->delay(10);
-    //     }
-    // }
 
     int32_t* data = strain.get_data(0);
     uint32_t last_update = strain.get_last_update(0);
 
     hal.console->printf("----------------------------------\n");
     hal.console->printf("time: %ld\n", last_update);
-    for (uint8_t i = 0; i < 10; i++)
+    for (uint8_t i = 0; i < 12; i++)
     {
         hal.console->printf("Strain gauge %d: %ld\n", i+1, data[i]);
 
