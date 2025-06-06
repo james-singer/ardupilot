@@ -49,14 +49,17 @@ void AP_Strain::init(void)
     for (uint8_t i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
         sensors[i].status = Status::NotConnected;
-        sensors[i].I2C_id = 0x9 + i;
+        sensors[i].I2C_id = 0x9 + 7 * i; // 0x09, 0x10
 
         AP_HAL::OwnPtr<AP_HAL::I2CDevice> dev_temp = hal.i2c_mgr->get_device(0, sensors[i].I2C_id);
         AP_Strain_Backend* backend_temp = NEW_NOTHROW AP_Strain_Backend(sensors[i], std::move(dev_temp), _singleton);
         drivers[i] = backend_temp;
-        drivers[i]->init();
-
-        _num_sensors++;
+        
+        if (drivers[i]->init())
+        {
+            _num_sensors++;
+        }
+        hal.scheduler->delay(100);
     }
 
     num_cal = 0;

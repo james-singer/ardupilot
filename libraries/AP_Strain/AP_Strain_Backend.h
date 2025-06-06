@@ -43,4 +43,6 @@ private:
     // Helper function for updating last change time
     void update_last_change_ms(bool reset,int32_t last_time);
 
+    void correct_missing_sensor();
+
 };

@@ -30,10 +30,10 @@ bool AP_Strain_Backend::init()
 
     DEV_PRINTF("I2C starting\n");
 
-    // Call timer() at 80Hz
-    _dev->register_periodic_callback(12500, FUNCTOR_BIND_MEMBER(&AP_Strain_Backend::timer, void));
+    // Call timer() at 100Hz
+    _dev->register_periodic_callback(10000, FUNCTOR_BIND_MEMBER(&AP_Strain_Backend::timer, void));
 
-    if (!write_byte(0x50)) {
+    if (!calibrate()) {
         return false;
     }
 
@@ -52,7 +52,7 @@ void AP_Strain_Backend::timer(void)
     int32_t last_time = _sensor.last_update_ms;
 
     // Get the semaphore
-    bool has_sem = _dev->get_semaphore()->take(100);
+    bool has_sem = _dev->get_semaphore()->take(50);
     if (has_sem)
     {
         // If we have the semaphore, call get_reading and store the return value in read
@@ -111,13 +111,14 @@ bool AP_Strain_Backend::get_reading()
     // Create the buffer to store the data
     uint8_t buffer[_sensor.num_data*4];
 
+    // *** not nessary to write "P" to the sensor currently ***
     // Write "P" to sensor
-    if (!write_byte(0x50)) 
-    {
-        // Writing to sensor failed
-        // Return false... dealt with in timer()
-        return false;
-    }
+    // if (!write_byte(0x50)) 
+    // {
+    //     // Writing to sensor failed
+    //     // Return false... dealt with in timer()
+    //     return false;
+    // }
 
     // Read bytes into the buffer
     if (!_dev->read(buffer, sizeof(buffer)))
@@ -137,7 +138,9 @@ bool AP_Strain_Backend::get_reading()
                  ((int32_t) buffer[i*4+2] << 16) | 
                  ((int32_t) buffer[i*4+3] << 24);
     }
+    correct_missing_sensor(); // fixes missing value on sensor 10
     _sensor.last_update_ms = AP_HAL::millis();
+
     return true;
 }
 
@@ -147,13 +150,11 @@ void AP_Strain_Backend::set_status(AP_Strain::sensor &_strain_arg, AP_Strain::St
     _strain_arg.status = status;
 }
 
-
 // true if sensor is returning data
 bool AP_Strain_Backend::has_data() const {
     return ((_sensor.status != AP_Strain::Status::NotConnected) &&
             (_sensor.status != AP_Strain::Status::NoData));
 }
-
 
 bool AP_Strain_Backend::calibrate()
 {
@@ -206,5 +207,15 @@ bool AP_Strain_Backend::reset()
         return false;
     }
 
+}
+
+
+void AP_Strain_Backend::correct_missing_sensor()
+{   
+    // hacky fix for missing sensor 10
+    if (_sensor.data[10] == 0 && !_sensor.data[11] == 0)
+    {
+        _sensor.data[10] = _sensor.data[11];
+    }
 }
 
