@@ -35,68 +35,63 @@ void setup()
     hal.console->printf("Strain test\n");
     strain.init();
     strain.calibrate_all();
-    // dev_temp = hal.i2c_mgr->get_device(0, 0x09);
-    // dev_temp->set_retries(2);
-    // dev_temp->set_speed(AP_HAL::Device::SPEED_HIGH);
-
-
-    
 
 }
 
 void loop()
 {  
 
-    int32_t* data = strain.get_data(0);
-    uint32_t last_update = strain.get_last_update(0);
+    int32_t* data_arm_0 = strain.get_data(0);
+    uint32_t last_update_arm_0 = strain.get_last_update(0);
 
-    hal.console->printf("----------------------------------\n");
-    hal.console->printf("time: %ld\n", last_update);
-    for (uint8_t i = 0; i < 12; i++)
+    int32_t* data_arm_1 = strain.get_data(1);
+    uint32_t last_update_arm_1 = strain.get_last_update(1);
+
+    uint8_t num_sensors = strain.get_num_sensors();
+
+    hal.console->printf("start----------------------------\n");
+    hal.console->printf("backend count: %u\n", num_sensors);
+    hal.console->printf("arm0 ID: %u\n", strain.get_ID(0));
+    hal.console->printf("arm1 IDs: %u\n", strain.get_ID(1));
+
+    hal.console->printf("arm1----------------------------\n");
+    hal.console->printf("time: %ld\n", last_update_arm_0);
+    for (uint8_t i = 0; i < 6; i++)
     {
-        hal.console->printf("Strain gauge %d: %ld\n", i+1, data[i]);
+        hal.console->printf("Strain gauge %d: %ld\n", i+1, data_arm_0[i]);
 
     }
-    hal.console->printf("----------------------------------\n");
-    hal.scheduler->delay(100);
-    // hal.console->printf("Strain test #############################################################################\n");
-    // bool has_own = dev_temp->get_semaphore()->take(100);
-    // // hal.console->printf("dev_temp = %d\n", dev_temp->get_bus_address());
-    // // int32_t data;
-    // const uint8_t* poll_a = &poll;
-    // if (has_own) {
-    //         uint8_t buffer[32]; // Buffer to hold the 4 bytes read from the I2C bus
-    //     if (dev_temp->transfer(poll_a, 1,NULL, 0)) {
-    //         hal.console->printf("'P' sent\n");
-    //     }
-    //     else 
-    //     {
-    //         hal.console->printf("failed to send\n");
-    //     }
+    hal.console->printf("\n");
 
-    //     if (dev_temp->read(buffer, sizeof(buffer))) {
+    hal.console->printf("arm2----------------------------\n");
+    for (uint8_t i = 6; i < 12; i++)
+    {
+        hal.console->printf("Strain gauge %d: %ld\n", i+1, data_arm_0[i]);
 
-    //         int32_t combined_value = (int32_t(buffer[0]) ) |
-    //                                 (int32_t(buffer[1]) << 8) |
-    //                                 (int32_t(buffer[2]) << 16)  |
-    //                                 (int32_t(buffer[3]) << 24 );
-                                    
-    //         hal.console->printf("Data: %ld\n", combined_value);
-            
-    //     }
-    //     else
-    //     {
-    //         hal.console->printf("failed to read\n");
-    //     }
-    // }
-    // else 
-    // {
-    //     hal.console->printf("failed to get semaphore\n");
-    // }    
+    }
+    hal.console->printf("\n");
 
-    
-    // dev_temp->get_semaphore()->give();
-    
+
+    hal.console->printf("arm3----------------------------\n");
+    hal.console->printf("time: %ld\n", last_update_arm_1);
+    for (uint8_t i = 0; i < 6; i++)
+    {
+        hal.console->printf("Strain gauge %d: %ld\n", i+1, data_arm_1[i]);
+
+    }
+    hal.console->printf("\n");
+
+    hal.console->printf("arm4----------------------------\n");
+    for (uint8_t i = 6; i < 12; i++)
+    {
+        hal.console->printf("Strain gauge %d: %ld\n", i+1, data_arm_1[i]);
+
+    }
+    hal.console->printf("\n");
+    hal.console->printf("-------------------- end \n");
+
+    hal.scheduler->delay(300);
+  
     
 }
 AP_HAL_MAIN();
