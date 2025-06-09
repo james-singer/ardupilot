@@ -1079,7 +1079,7 @@ void AC_PosControl::update_z_controller()
 
 
 // Joe - update_z_controller_strain 
-void AC_PosControl::update_z_controller_strain(float multiplier)
+void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
 {
     // check for ekf z-axis position reset
     handle_ekf_z_reset();
@@ -1140,7 +1140,7 @@ void AC_PosControl::update_z_controller_strain(float multiplier)
 
     thr_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     thr_out += _motors.get_throttle_hover();
-    thr_out *= multiplier;
+    thr_out *= disturbance_multiplier;
 
     // Actuator commands
 
