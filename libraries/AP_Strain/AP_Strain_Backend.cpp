@@ -215,7 +215,9 @@ void AP_Strain_Backend::correct_missing_sensor()
     // hacky fix for missing sensor 10
     if (_sensor.data[10] == 0 && !_sensor.data[11] == 0)
     {
-        _sensor.data[10] = _sensor.data[11];
+        _sensor.data[10] = _sensor.data[9];
+        _sensor.data[4] = _sensor.data[3];
+        _sensor.data[5] = _sensor.data[3];
     }
 }
 

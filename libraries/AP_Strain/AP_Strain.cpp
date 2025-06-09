@@ -59,7 +59,7 @@ void AP_Strain::init(void)
         {
             _num_sensors++;
         }
-        hal.scheduler->delay(100);
+        // hal.scheduler->delay(100);
     }
 
     num_cal = 0;
@@ -86,7 +86,7 @@ float AP_Strain::get_avg_data()
         strain_data = sensors[i].data;
         for(j = 0; j < STRAIN_SENSORS; j++)
         {
-            sum += strain_data[i];
+            sum += strain_data[j];
         }
     }
     return sum/(STRAIN_SENSORS * STRAIN_MAX_INSTANCES);

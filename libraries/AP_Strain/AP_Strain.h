@@ -13,7 +13,7 @@
 #define STRAIN_MAX_INSTANCES 2
 #define STRAIN_SENSORS 12
 #define BUS_NUMBER = 0
-#define SENSOR_SCALE_FACTOR 300000
+#define SENSOR_SCALE_FACTOR 50000
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
@@ -54,7 +54,6 @@ class AP_Strain
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
-    
     uint8_t get_ID(uint8_t instance) { return sensors[instance].I2C_id; }
     
     bool reset_all();
