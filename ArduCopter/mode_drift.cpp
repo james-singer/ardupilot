@@ -1,5 +1,5 @@
 #include "Copter.h"
-#include "AP_Vehicle.h"
+#include "AP_Strain.h"
 
 #if MODE_DRIFT_ENABLED
 
