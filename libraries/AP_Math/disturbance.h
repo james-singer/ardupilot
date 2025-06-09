@@ -25,9 +25,9 @@ private:
     bool complete;
 
     // Total disturbance length in seconds
-    float timespan = 0.2f;
+    float timespan = 0.25f;
 
-    float time_delay = 5.0f;
+    float time_delay = 3.0f;
 
     float magnitude = 0.0f;
 
