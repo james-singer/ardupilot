@@ -1079,7 +1079,7 @@ void AC_PosControl::update_z_controller()
 
 
 // Joe - update_z_controller_strain 
-void AC_PosControl::update_z_controller_strain()
+void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
 {
     // check for ekf z-axis position reset
     handle_ekf_z_reset();
@@ -1133,14 +1133,6 @@ void AC_PosControl::update_z_controller_strain()
     // gets the average strain from the strain sensors
     float strain_meas = _strain.get_scaled_avg_data();
 
-    // const int32_t* strain_data = _strain.get_data(0);
-    // float sum = 0;
-    // for(int i = 0; i < STRAIN_SENSORS; i++) {
-    //     sum += strain_data[i];
-    // }
-    // const float strain_meas = sum / STRAIN_SENSORS;
-    
-
     // ensure imax is always large enough to overpower hover throttle
     if (_motors.get_throttle_hover() * 1000.0f > _pid_strain_z.imax()) {
         _pid_strain_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
@@ -1148,6 +1140,7 @@ void AC_PosControl::update_z_controller_strain()
 
     thr_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     thr_out += _motors.get_throttle_hover();
+    thr_out *= disturbance_multiplier;
 
     // Actuator commands
 
