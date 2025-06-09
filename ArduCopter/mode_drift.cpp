@@ -139,7 +139,7 @@ void ModeDrift::run()
     else
     {
         float multiplier = disturbance.update(disturbance_time);
-        pos_control->update_z_controller_strain(multiplier);
+        pos_control->update_z_controller_strain(1);
     }
 }
 
