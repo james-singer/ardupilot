@@ -45,3 +45,6 @@
 [submodule "modules/littlefs"]
 	path = modules/littlefs
 	url = https://github.com/ArduPilot/littlefs.git
+[submodule "libraries/eigen"]
+	path = libraries/eigen
+	url = https://gitlab.com/libeigen/eigen.git

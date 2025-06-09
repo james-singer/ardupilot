@@ -50,6 +50,7 @@ class AP_Strain
     int32_t* get_data(uint8_t instance);
     float get_avg_data();
     float get_scaled_avg_data();
+    float get_scaled_weighted_avg_data();
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
@@ -73,6 +74,13 @@ class AP_Strain
     uint8_t _num_sensors = 0;
     uint8_t _primary = 0;
     bool init_done = false;
+
+    float weights_first[STRAIN_SENSORS];
+    float weights_second[STRAIN_SENSORS];
+
+  
+    
+
 
     uint16_t num_cal = 0; // number of calibrations done
 

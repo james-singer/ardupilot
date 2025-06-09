@@ -92,6 +92,12 @@ float AP_Strain::get_avg_data()
     return sum/(STRAIN_SENSORS * STRAIN_MAX_INSTANCES);
 }
 
+float AP_Strain::get_scaled_weighted_avg_data()
+{
+    // TODO: Implement scaled weighted average data
+    return 0;
+}
+
 float AP_Strain::get_scaled_avg_data()
 {
     return get_avg_data() / SENSOR_SCALE_FACTOR;
@@ -149,6 +155,8 @@ bool AP_Strain::get_status_all()
     }
     return true;
 }
+
+
 
 namespace AP {
 
