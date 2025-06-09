@@ -1,4 +1,5 @@
 #include "Copter.h"
+#include "AP_Vehicle.h"
 
 #if MODE_DRIFT_ENABLED
 
@@ -43,7 +44,7 @@ bool ModeDrift::init(bool ignore_checks)
     switch_time = 0.0f;
     disturbance_time = 0.0f;
     disturbance.init();
-    // strain.calibrate_all();
+    strain.calibrate_all();
     return true;
 }
 
