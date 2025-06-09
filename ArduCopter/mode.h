@@ -908,8 +908,8 @@ public:
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(AP_Arming::Method method) const override { return true; };
     bool is_autopilot() const override { return false; }
-    // float switch_time;
-    // float switch_delay = 2.0f;
+    float switch_time;
+    float switch_delay = 2.0f;
     Disturbance disturbance;
     float disturbance_time;
 
