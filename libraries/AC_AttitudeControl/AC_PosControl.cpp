@@ -863,8 +863,11 @@ void AC_PosControl::init_z_controller()
     // initialise ekf z reset handler
     init_ekf_z_reset();
 
+    _strain.calibrate_all();
+
     // initialise z_controller time out
     _last_update_z_ticks = AP::scheduler().ticks32();
+    
 }
 
 /// input_accel_z - calculate a jerk limited path from the current position, velocity and acceleration to an input acceleration.
@@ -1131,19 +1134,17 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     // TODO make a get number of sensors a function in the strain class
 
     // gets the average strain from the strain sensors
-    float strain_meas = -1*_strain.get_scaled_avg_data();
+    float strain_meas = -1.0f*_strain.get_scaled_avg_data();
 
     // ensure imax is always large enough to overpower hover throttle
     if (_motors.get_throttle_hover() * 1000.0f > _pid_strain_z.imax()) {
         _pid_strain_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
     }
 
-    thr_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
-    thr_out += _motors.get_throttle_hover();
-    thr_out *= disturbance_multiplier;
-
-    _strain_out = thr_out;
-
+    _strain_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
+    _strain_out += _motors.get_throttle_hover();
+    _strain_out *= disturbance_multiplier;
+    
     const float z_accel_meas = get_z_accel_cmss();
     // ensure imax is always large enough to overpower hover throttle
     if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {

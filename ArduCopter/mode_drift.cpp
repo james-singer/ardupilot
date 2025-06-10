@@ -44,7 +44,6 @@ bool ModeDrift::init(bool ignore_checks)
     switch_time = 0.0f;
     disturbance_time = 0.0f;
     disturbance.init();
-    copter.strain.calibrate_all();
     return true;
 }
 
