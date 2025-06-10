@@ -63,9 +63,9 @@ extern const AP_HAL::HAL& hal;
  # define POSCONTROL_ACC_Z_DT                   0.0025f // vertical acceleration controller dt default
  
  # define POSCONTROL_STRAIN_Z_P                    0.5f    
- # define POSCONTROL_STRAIN_Z_I                    0.05f    
+ # define POSCONTROL_STRAIN_Z_I                    1.0f    
  # define POSCONTROL_STRAIN_Z_D                    0.0f    
- # define POSCONTROL_STRAIN_Z_IMAX                 100     
+ # define POSCONTROL_STRAIN_Z_IMAX                 800     
  # define POSCONTROL_STRAIN_Z_FILT_HZ              20.0f   
  # define POSCONTROL_STRAIN_Z_DT                   0.0025f 
  
