@@ -51,21 +51,21 @@ extern const AP_HAL::HAL& hal;
 #else
  // default gains for Copter / TradHeli
  # define POSCONTROL_POS_Z_P                    1.0f    // vertical position controller P gain default
- # define POSCONTROL_VEL_Z_P                    5.0f    // vertical velocity controller P gain default
+ # define POSCONTROL_VEL_Z_P                    4.5f    // vertical velocity controller P gain default
  # define POSCONTROL_VEL_Z_IMAX                 1000.0f // vertical velocity controller IMAX gain default
  # define POSCONTROL_VEL_Z_FILT_HZ              5.0f    // vertical velocity controller input filter
  # define POSCONTROL_VEL_Z_FILT_D_HZ            5.0f    // vertical velocity controller input filter for D
  # define POSCONTROL_ACC_Z_P                    0.5f    // vertical acceleration controller P gain default
- # define POSCONTROL_ACC_Z_I                    1.0f    // vertical acceleration controller I gain default
+ # define POSCONTROL_ACC_Z_I                    0.0f    // vertical acceleration controller I gain default
  # define POSCONTROL_ACC_Z_D                    0.0f    // vertical acceleration controller D gain default
  # define POSCONTROL_ACC_Z_IMAX                 800     // vertical acceleration controller IMAX gain default
  # define POSCONTROL_ACC_Z_FILT_HZ              20.0f   // vertical acceleration controller input filter default
  # define POSCONTROL_ACC_Z_DT                   0.0025f // vertical acceleration controller dt default
  
- # define POSCONTROL_STRAIN_Z_P                    0.5f    
+ # define POSCONTROL_STRAIN_Z_P                    0.7f    
  # define POSCONTROL_STRAIN_Z_I                    0.0f    
  # define POSCONTROL_STRAIN_Z_D                    0.0f    
- # define POSCONTROL_STRAIN_Z_IMAX                 800     
+ # define POSCONTROL_STRAIN_Z_IMAX                 100     
  # define POSCONTROL_STRAIN_Z_FILT_HZ              20.0f   
  # define POSCONTROL_STRAIN_Z_DT                   0.0025f 
  
@@ -1157,7 +1157,7 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     // Actuator commands
 
     // send throttle to attitude controller with angle boost
-    _attitude_control.set_throttle_out(thr_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ_HZ);
+    _attitude_control.set_throttle_out(_strain_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ_HZ);
 
     // Check for vertical controller health
 

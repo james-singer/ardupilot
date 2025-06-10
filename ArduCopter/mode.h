@@ -435,6 +435,10 @@ public:
     bool allows_save_trim() const override { return true; }
     bool allows_flip() const override { return true; }
     bool crash_check_enabled() const override { return false; }
+    float switch_time;
+    float switch_delay = 2.0f;
+    Disturbance disturbance;
+    float disturbance_time;
 
 protected:
 
