@@ -63,7 +63,7 @@ extern const AP_HAL::HAL& hal;
  # define POSCONTROL_ACC_Z_DT                   0.0025f // vertical acceleration controller dt default
  
  # define POSCONTROL_STRAIN_Z_P                    0.5f    
- # define POSCONTROL_STRAIN_Z_I                    1.0f    
+ # define POSCONTROL_STRAIN_Z_I                    0.0f    
  # define POSCONTROL_STRAIN_Z_D                    0.0f    
  # define POSCONTROL_STRAIN_Z_IMAX                 800     
  # define POSCONTROL_STRAIN_Z_FILT_HZ              20.0f   
@@ -1157,7 +1157,7 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     // Actuator commands
 
     // send throttle to attitude controller with angle boost
-    _attitude_control.set_throttle_out(_strain_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ_HZ);
+    _attitude_control.set_throttle_out(thr_out, true, POSCONTROL_THROTTLE_CUTOFF_FREQ_HZ);
 
     // Check for vertical controller health
 
