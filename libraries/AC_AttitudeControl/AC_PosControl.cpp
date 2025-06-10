@@ -63,9 +63,9 @@ extern const AP_HAL::HAL& hal;
  # define POSCONTROL_ACC_Z_DT                   0.0025f // vertical acceleration controller dt default
  
  # define POSCONTROL_STRAIN_Z_P                    0.5f    
- # define POSCONTROL_STRAIN_Z_I                    0.0f    
+ # define POSCONTROL_STRAIN_Z_I                    0.05f    
  # define POSCONTROL_STRAIN_Z_D                    0.0f    
- # define POSCONTROL_STRAIN_Z_IMAX                 30     
+ # define POSCONTROL_STRAIN_Z_IMAX                 100     
  # define POSCONTROL_STRAIN_Z_FILT_HZ              20.0f   
  # define POSCONTROL_STRAIN_Z_DT                   0.0025f 
  
@@ -1126,7 +1126,7 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     // Strain Controller 
     // Ian 
     // TODO make this less clunky such that it does not just use thr_out
-    float _strain_target = _accel_target.z * STRAIN_TARGET_GAIN;
+    float _strain_target = _accel_target.z;  //* STRAIN_TARGET_GAIN
 
     // TODO make a get number of sensors a function in the strain class
 
@@ -1141,6 +1141,18 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     thr_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     thr_out += _motors.get_throttle_hover();
     thr_out *= disturbance_multiplier;
+
+    _strain_out = thr_out;
+
+    const float z_accel_meas = get_z_accel_cmss();
+    // ensure imax is always large enough to overpower hover throttle
+    if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {
+        _pid_accel_z.set_imax(_motors.get_throttle_hover() * 1000.0f);
+    }
+    thr_out = _pid_accel_z.update_all(_accel_target.z, z_accel_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
+    thr_out += _pid_accel_z.get_ff() * 0.001f;
+  
+    thr_out += _motors.get_throttle_hover();
 
     // Actuator commands
 
