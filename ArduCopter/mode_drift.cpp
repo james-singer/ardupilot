@@ -44,6 +44,7 @@ bool ModeDrift::init(bool ignore_checks)
     switch_time = 0.0f;
     disturbance_time = 0.0f;
     disturbance.init();
+    copter.strain.calibrate_all();
     return true;
 }
 
@@ -130,16 +131,18 @@ void ModeDrift::run()
     switch_time += G_Dt;
 
     // If we are within the mode switch delay time period or the status of any sensors is not operational, use the original z controller while the sensors are calibrated
-    if ((switch_time - switch_delay < 0) || !copter.strain.get_status_all())
-    {
-        pos_control->update_z_controller();
-    }
-    // Otherwise, the sensors have had time to calibrate and thus we can use the new z controller
-    else
-    {
-        float multiplier = disturbance.update(disturbance_time);
-        pos_control->update_z_controller_strain(multiplier);
-    }
+    // if ((switch_time - switch_delay < 0) || !copter.strain.get_status_all())
+    // {
+    //     pos_control->update_z_controller();
+    // }
+    // // Otherwise, the sensors have had time to calibrate and thus we can use the new z controller
+    // else
+    // {
+    //     float multiplier = disturbance.update(disturbance_time);
+    //     pos_control->update_z_controller_strain(multiplier);
+    // }
+    float multiplier = disturbance.update(disturbance_time);
+    pos_control->update_z_controller_strain(multiplier);
 }
 
 // get_throttle_assist - return throttle output (range 0 ~ 1) based on pilot input and z-axis velocity

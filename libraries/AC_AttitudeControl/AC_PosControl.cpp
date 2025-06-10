@@ -863,8 +863,6 @@ void AC_PosControl::init_z_controller()
     // initialise ekf z reset handler
     init_ekf_z_reset();
 
-    _strain.calibrate_all();
-
     // initialise z_controller time out
     _last_update_z_ticks = AP::scheduler().ticks32();
     
@@ -1144,7 +1142,7 @@ void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)
     _strain_out = _pid_strain_z.update_all(_strain_target, strain_meas, _dt, (_motors.limit.throttle_lower || _motors.limit.throttle_upper)) * 0.001f;
     _strain_out += _motors.get_throttle_hover();
     _strain_out *= disturbance_multiplier;
-    
+
     const float z_accel_meas = get_z_accel_cmss();
     // ensure imax is always large enough to overpower hover throttle
     if (_motors.get_throttle_hover() * 1000.0f > _pid_accel_z.imax()) {
