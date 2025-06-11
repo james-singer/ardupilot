@@ -103,6 +103,28 @@ float AP_Strain::get_scaled_avg_data()
     return get_avg_data() / SENSOR_SCALE_FACTOR;
 }
 
+float* AP_Strain::get_arm_averages()
+{
+    float averages[NUM_ARMS];
+    uint8_t count = 0;
+    // Code is going to be tailored to current demo w/ two microcontrollers and four arms
+    // Not useful for other cases 
+    for (int i = 0; i < STRAIN_MAX_INSTANCES; i++)
+    {
+        float sum_first_six = 0;
+        float sum_second_six = 0;
+        for (int j = 0; j < STRAIN_SENSORS; j++)
+        {
+            if (j < 6)
+                sum_first_six += sensors[i].data[j];
+            else    
+                sum_second_six += sensors[i].data[j];
+        }
+        averages[count++] = sum_first_six / (6 * SENSOR_SCALE_FACTOR);
+        averages[count++] = sum_second_six / (6 * SENSOR_SCALE_FACTOR);
+    }
+}
+
 uint8_t AP_Strain::get_num_sensors()
 {
     return _num_sensors;

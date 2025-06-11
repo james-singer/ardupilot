@@ -12,6 +12,7 @@
 
 #define STRAIN_MAX_INSTANCES 2
 #define STRAIN_SENSORS 12
+#define NUM_ARMS
 #define BUS_NUMBER = 0
 #define SENSOR_SCALE_FACTOR 50
 // timeouts for health reporting
@@ -51,6 +52,7 @@ class AP_Strain
     float get_avg_data();
     float get_scaled_avg_data();
     float get_scaled_weighted_avg_data();
+    float* get_arm_averages();
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
