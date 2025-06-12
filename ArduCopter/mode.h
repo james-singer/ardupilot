@@ -410,31 +410,18 @@ public:
     // inherit constructor
     using Mode::Mode;
     Number mode_number() const override { return Number::ACRO; }
+        
+    bool init(bool ignore_checks) override;
+    void run() override;
 
-    enum class Trainer {
-        OFF = 0,
-        LEVELING = 1,
-        LIMITED = 2,
-    };
-
-    enum class AcroOptions {
-        AIR_MODE = 1 << 0,
-        RATE_LOOP_ONLY = 1 << 1,
-    };
-
-    virtual void run() override;
-
-    bool requires_GPS() const override { return false; }
-    bool has_manual_throttle() const override { return true; }
+    bool requires_GPS() const override { return true; }
+    bool has_manual_throttle() const override { return false; }
     bool allows_arming(AP_Arming::Method method) const override { return true; };
     bool is_autopilot() const override { return false; }
-    bool init(bool ignore_checks) override;
-    void exit() override;
-    // whether an air-mode aux switch has been toggled
-    void air_mode_aux_changed();
-    bool allows_save_trim() const override { return true; }
-    bool allows_flip() const override { return true; }
-    bool crash_check_enabled() const override { return false; }
+    bool has_user_takeoff(bool must_navigate) const override { return true; }
+    bool allows_autotune() const override { return true; }
+    bool allows_auto_trim() const override { return true;}
+
     float switch_time;
     float switch_delay = 2.0f;
     Disturbance disturbance;
@@ -445,14 +432,66 @@ protected:
     const char *name() const override { return "ACRO"; }
     const char *name4() const override { return "ACRO"; }
 
-    // get_pilot_desired_angle_rates - transform pilot's normalised roll pitch and yaw input into a desired lean angle rates
-    // inputs are -1 to 1 and the function returns desired angle rates in centi-degrees-per-second
-    void get_pilot_desired_angle_rates(float roll_in, float pitch_in, float yaw_in, float &roll_out, float &pitch_out, float &yaw_out);
-
-    float throttle_hover() const override;
 
 private:
-    bool disable_air_mode_reset;
+
+    void update_pilot_lean_angle(float &lean_angle_filtered, float &lean_angle_raw);
+    float mix_controls(float mix_ratio, float first_control, float second_control);
+    void update_brake_angle_from_velocity(float &brake_angle, float velocity);
+    void init_wind_comp_estimate();
+    void update_wind_comp_estimate();
+    void get_wind_comp_lean_angles(float &roll_angle, float &pitch_angle);
+    void roll_controller_to_pilot_override();
+    void pitch_controller_to_pilot_override();
+
+    enum class RPMode {
+        PILOT_OVERRIDE=0,            // pilot is controlling this axis (i.e. roll or pitch)
+        BRAKE,                       // this axis is braking towards zero
+        BRAKE_READY_TO_LOITER,       // this axis has completed braking and is ready to enter loiter mode (both modes must be this value before moving to next stage)
+        BRAKE_TO_LOITER,             // both vehicle's axis (roll and pitch) are transitioning from braking to loiter mode (braking and loiter controls are mixed)
+        LOITER,                      // both vehicle axis are holding position
+        CONTROLLER_TO_PILOT_OVERRIDE // pilot has input controls on this axis and this axis is transitioning to pilot override (other axis will transition to brake if no pilot input)
+    };
+
+    RPMode roll_mode;
+    RPMode pitch_mode;
+
+    // pilot input related variables
+    float pilot_roll;                         // pilot requested roll angle (filtered to slow returns to zero)
+    float pilot_pitch;                        // pilot requested roll angle (filtered to slow returns to zero)
+
+    // braking related variables
+    struct {
+        uint8_t time_updated_roll   : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+        uint8_t time_updated_pitch  : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+
+        float gain;                         // gain used during conversion of vehicle's velocity to lean angle during braking (calculated from rate)
+        float roll;                         // target roll angle during braking periods
+        float pitch;                        // target pitch angle during braking periods
+        int16_t timeout_roll;               // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+        int16_t timeout_pitch;              // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+        float angle_max_roll;               // maximum lean angle achieved during braking.  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+        float angle_max_pitch;              // maximum lean angle achieved during braking  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+        int16_t to_loiter_timer;            // cycles to mix brake and loiter controls in POSHOLD_TO_LOITER
+    } brake;
+
+    // loiter related variables
+    int16_t controller_to_pilot_timer_roll;     // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    int16_t controller_to_pilot_timer_pitch;    // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    float controller_final_roll;                // final roll angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+    float controller_final_pitch;               // final pitch angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+
+    // wind compensation related variables
+    Vector2f wind_comp_ef;                      // wind compensation in earth frame, filtered lean angles from position controller
+    float wind_comp_roll;                       // roll angle to compensate for wind
+    float wind_comp_pitch;                      // pitch angle to compensate for wind
+    uint16_t wind_comp_start_timer;             // counter to delay start of wind compensation for a short time after loiter is engaged
+    int8_t  wind_comp_timer;                    // counter to reduce wind comp roll/pitch lean angle calcs to 10hz
+
+    // final output
+    float roll;   // final roll angle sent to attitude controller
+    float pitch;  // final pitch angle sent to attitude controller
+
 };
 #endif
 
@@ -1714,23 +1753,20 @@ public:
     // inherit constructor
     using Mode::Mode;
     Number mode_number() const override { return Number::SPORT; }
-
+    
     bool init(bool ignore_checks) override;
     void run() override;
 
-    bool requires_GPS() const override { return false; }
+    bool requires_GPS() const override { return true; }
     bool has_manual_throttle() const override { return false; }
     bool allows_arming(AP_Arming::Method method) const override { return true; };
     bool is_autopilot() const override { return false; }
-    bool has_user_takeoff(bool must_navigate) const override {
-        return !must_navigate;
-    }
+    bool has_user_takeoff(bool must_navigate) const override { return true; }
+    bool allows_autotune() const override { return true; }
+    bool allows_auto_trim() const override { return true;}
+
     Disturbance disturbance;
     float disturbance_time;
-
-    // Chirp chirp;
-    // float chirp_mag = 0.2f;
-    // float chirp_time;
 
 protected:
 
@@ -1738,6 +1774,63 @@ protected:
     const char *name4() const override { return "SPRT"; }
 
 private:
+
+    void update_pilot_lean_angle(float &lean_angle_filtered, float &lean_angle_raw);
+    float mix_controls(float mix_ratio, float first_control, float second_control);
+    void update_brake_angle_from_velocity(float &brake_angle, float velocity);
+    void init_wind_comp_estimate();
+    void update_wind_comp_estimate();
+    void get_wind_comp_lean_angles(float &roll_angle, float &pitch_angle);
+    void roll_controller_to_pilot_override();
+    void pitch_controller_to_pilot_override();
+
+    enum class RPMode {
+        PILOT_OVERRIDE=0,            // pilot is controlling this axis (i.e. roll or pitch)
+        BRAKE,                       // this axis is braking towards zero
+        BRAKE_READY_TO_LOITER,       // this axis has completed braking and is ready to enter loiter mode (both modes must be this value before moving to next stage)
+        BRAKE_TO_LOITER,             // both vehicle's axis (roll and pitch) are transitioning from braking to loiter mode (braking and loiter controls are mixed)
+        LOITER,                      // both vehicle axis are holding position
+        CONTROLLER_TO_PILOT_OVERRIDE // pilot has input controls on this axis and this axis is transitioning to pilot override (other axis will transition to brake if no pilot input)
+    };
+
+    RPMode roll_mode;
+    RPMode pitch_mode;
+
+    // pilot input related variables
+    float pilot_roll;                         // pilot requested roll angle (filtered to slow returns to zero)
+    float pilot_pitch;                        // pilot requested roll angle (filtered to slow returns to zero)
+
+    // braking related variables
+    struct {
+        uint8_t time_updated_roll   : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+        uint8_t time_updated_pitch  : 1;    // true once we have re-estimated the braking time.  This is done once as the vehicle begins to flatten out after braking
+
+        float gain;                         // gain used during conversion of vehicle's velocity to lean angle during braking (calculated from rate)
+        float roll;                         // target roll angle during braking periods
+        float pitch;                        // target pitch angle during braking periods
+        int16_t timeout_roll;               // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+        int16_t timeout_pitch;              // number of cycles allowed for the braking to complete, this timeout will be updated at half-braking
+        float angle_max_roll;               // maximum lean angle achieved during braking.  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+        float angle_max_pitch;              // maximum lean angle achieved during braking  Used to determine when the vehicle has begun to flatten out so that we can re-estimate the braking time
+        int16_t to_loiter_timer;            // cycles to mix brake and loiter controls in POSHOLD_TO_LOITER
+    } brake;
+
+    // loiter related variables
+    int16_t controller_to_pilot_timer_roll;     // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    int16_t controller_to_pilot_timer_pitch;    // cycles to mix controller and pilot controls in POSHOLD_CONTROLLER_TO_PILOT
+    float controller_final_roll;                // final roll angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+    float controller_final_pitch;               // final pitch angle from controller as we exit brake or loiter mode (used for mixing with pilot input)
+
+    // wind compensation related variables
+    Vector2f wind_comp_ef;                      // wind compensation in earth frame, filtered lean angles from position controller
+    float wind_comp_roll;                       // roll angle to compensate for wind
+    float wind_comp_pitch;                      // pitch angle to compensate for wind
+    uint16_t wind_comp_start_timer;             // counter to delay start of wind compensation for a short time after loiter is engaged
+    int8_t  wind_comp_timer;                    // counter to reduce wind comp roll/pitch lean angle calcs to 10hz
+
+    // final output
+    float roll;   // final roll angle sent to attitude controller
+    float pitch;  // final pitch angle sent to attitude controller
 
 };
 
