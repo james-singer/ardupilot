@@ -15,7 +15,7 @@
 #define NUM_ARMS 4
 #define BUS_NUMBER = 0
 #define SENSOR_SCALE_FACTOR 50
-#define STRAIN_SENSOR_MSG 159
+#define STRAIN_SENSOR_MSG static_cast<ap_message>(159)
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
