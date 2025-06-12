@@ -7,7 +7,7 @@
 #include <Filter/DerivativeFilter.h>
 #include <AP_MSP/msp.h>
 #include <AP_ExternalAHRS/AP_ExternalAHRS.h>
-#include <GCS_Mavlink/ap_message.h>
+#include <GCS_MAVLink/ap_message.h>
 
 
 
