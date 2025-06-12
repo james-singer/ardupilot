@@ -335,7 +335,7 @@ bool GCS_MAVLINK_Copter::try_send_message(enum ap_message id)
 {
     switch(id) {
         
-    case MSG_STRAIN_SENSOR: {
+    case STRAIN_SENSOR_MSG: {
         float buffer[4];
         copter.strain.get_arm_averages(buffer);
         mavlink_msg_strain_sensor_send(
