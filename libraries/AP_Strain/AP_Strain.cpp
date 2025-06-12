@@ -123,6 +123,7 @@ float* AP_Strain::get_arm_averages()
         averages[count++] = sum_first_six / (6 * SENSOR_SCALE_FACTOR);
         averages[count++] = sum_second_six / (6 * SENSOR_SCALE_FACTOR);
     }
+    return averages;
 }
 
 uint8_t AP_Strain::get_num_sensors()
