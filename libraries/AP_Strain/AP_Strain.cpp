@@ -179,6 +179,15 @@ bool AP_Strain::get_status_all()
     return true;
 }
 
+void AP_Strain::send_telemetry()
+{
+    uint32_t current_time = AP_HAL::millis();
+    if ((current_time - old_time) > 100)
+    {
+        gcs().send_message(STRAIN_SENSOR_MSG);
+        old_time = current_time;
+    }
+}
 
 
 namespace AP {

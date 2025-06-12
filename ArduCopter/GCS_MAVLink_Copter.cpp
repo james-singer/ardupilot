@@ -334,6 +334,20 @@ bool GCS_Copter::vehicle_initialised() const {
 bool GCS_MAVLINK_Copter::try_send_message(enum ap_message id)
 {
     switch(id) {
+        
+    case MSG_STRAIN_SENSOR: {
+        float* strain_values = copter.strain.get_arm_averages();
+        mavlink_msg_strain_sensor_send(
+            chan,
+            AP_HAL::millis(),
+            0,
+            strain_values[0],
+            strain_values[1],
+            strain_values[2],
+            strain_values[3]
+        );
+        return true;
+    }
 
 #if AP_TERRAIN_AVAILABLE
     case MSG_TERRAIN_REQUEST:

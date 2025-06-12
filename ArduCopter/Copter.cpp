@@ -752,6 +752,7 @@ void Copter::twentyfive_hz_logging()
     // Ian 
     Log_Write_Strain_1();
     Log_Write_Strain_2();
+    copter.strain.send_telemetry();
 }
 
 #endif  // HAL_LOGGING_ENABLED

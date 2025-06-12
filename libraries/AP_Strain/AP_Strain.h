@@ -15,6 +15,7 @@
 #define NUM_ARMS 4
 #define BUS_NUMBER = 0
 #define SENSOR_SCALE_FACTOR 50
+#define STRAIN_SENSOR_MSG 159
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
@@ -57,6 +58,7 @@ class AP_Strain
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
     uint8_t get_ID(uint8_t instance) { return sensors[instance].I2C_id; }
+    void send_telemetry();
     
     bool reset_all();
     bool calibrate_all();
@@ -74,6 +76,7 @@ class AP_Strain
     // how many sensors do we have?
     uint8_t _num_sensors = 0;
     uint8_t _primary = 0;
+    uint32_t old_time = 0;
     bool init_done = false;
 
     float weights_first[STRAIN_SENSORS];
