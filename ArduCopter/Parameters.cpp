@@ -431,14 +431,14 @@ const AP_Param::Info Copter::var_info[] = {
 
     // ACRO_RP_EXPO moved to Command Model class
 
-#if MODE_ACRO_ENABLED
+// #if MODE_ACRO_ENABLED
     // @Param: ACRO_TRAINER
-    // @DisplayName: Acro Trainer
-    // @Description: Type of trainer used in acro mode
-    // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited
-    // @User: Advanced
-    GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED),
-#endif
+//     // @DisplayName: Acro Trainer
+//     // @Description: Type of trainer used in acro mode
+//     // @Values: 0:Disabled,1:Leveling,2:Leveling and Limited
+//     // @User: Advanced
+//     GSCALAR(acro_trainer,   "ACRO_TRAINER",     (uint8_t)ModeAcro::Trainer::LIMITED),
+// #endif
 
     // variables not in the g class which contain EEPROM saved variables
 
