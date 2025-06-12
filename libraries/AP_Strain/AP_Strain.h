@@ -53,7 +53,7 @@ class AP_Strain
     float get_avg_data();
     float get_scaled_avg_data();
     float get_scaled_weighted_avg_data();
-    float* get_arm_averages();
+    void get_arm_averages(float* destination);
     uint8_t get_num_sensors();
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
