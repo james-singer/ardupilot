@@ -6226,6 +6226,7 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
         // Attempt to print to maxproxy?
         GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
         CHECK_PAYLOAD_SIZE(STRAIN_SENSOR);
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Payload size is fine");
         mavlink_msg_strain_sensor_send(
             chan,
             0,
@@ -6235,6 +6236,7 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
             1.0f,
             1.0f
         );
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Message sent");
         return true;
     }
 
