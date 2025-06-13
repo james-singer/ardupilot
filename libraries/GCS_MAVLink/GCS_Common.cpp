@@ -3407,7 +3407,7 @@ void GCS_MAVLINK::send_vfr_hud()
         abs(vfr_hud_throttle()),
         vfr_hud_alt(),
         vfr_hud_climbrate(),
-        1);
+        1.0f);
 }
 #endif  // AP_AHRS_ENABLED
 
@@ -6225,9 +6225,9 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
         //     buffer[3]
         // );
         // Attempt to print to maxproxy?
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
         CHECK_PAYLOAD_SIZE(STRAIN_SENSOR);
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Payload size is fine");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Payload size is fine");
         mavlink_msg_strain_sensor_send(
             chan,
             0,
@@ -6237,7 +6237,7 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
             1.0f,
             1.0f
         );
-        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Message sent");
+        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Message sent");
         return true;
     }
 
