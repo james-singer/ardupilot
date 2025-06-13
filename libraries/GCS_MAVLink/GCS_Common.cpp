@@ -2436,6 +2436,9 @@ void GCS_MAVLINK::send_airspeed()
 #if AP_AHRS_ENABLED
 void GCS_MAVLINK::send_ahrs()
 {
+
+    // Joe - Hijacked Message!
+    // TODO: Reset this to its original state and use AHRS2 for higher frequency
     const AP_AHRS &ahrs = AP::ahrs();
     // const Vector3f &omega_I = ahrs.get_gyro_drift();
     float buffer[4];
@@ -6214,35 +6217,36 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
     bool ret = true;
 
     switch(id) {
-
-    case MSG_STRAIN_DATA: {
-        // float buffer[4];
-        // copter.strain.get_arm_averages(buffer);
-        // mavlink_msg_strain_sensor_send(
-        //     chan,
-        //     AP_HAL::millis(),
-        //     0,
-        //     buffer[0],
-        //     buffer[1],
-        //     buffer[2],
-        //     buffer[3]
-        // );
-        // Attempt to print to maxproxy?
-        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
-        CHECK_PAYLOAD_SIZE(STRAIN_SENSOR);
-        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Payload size is fine");
-        mavlink_msg_strain_sensor_send(
-            chan,
-            0,
-            0,
-            1.0f,
-            1.0f,
-            1.0f,
-            1.0f
-        );
-        // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Message sent");
-        return true;
-    }
+    
+        // Irrelevant Code: not going to be creating our own message
+    // case MSG_STRAIN_DATA: {
+    //     // float buffer[4];
+    //     // copter.strain.get_arm_averages(buffer);
+    //     // mavlink_msg_strain_sensor_send(
+    //     //     chan,
+    //     //     AP_HAL::millis(),
+    //     //     0,
+    //     //     buffer[0],
+    //     //     buffer[1],
+    //     //     buffer[2],
+    //     //     buffer[3]
+    //     // );
+    //     // Attempt to print to maxproxy?
+    //     // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
+    //     CHECK_PAYLOAD_SIZE(STRAIN_SENSOR);
+    //     // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Payload size is fine");
+    //     mavlink_msg_strain_sensor_send(
+    //         chan,
+    //         0,
+    //         0,
+    //         1.0f,
+    //         1.0f,
+    //         1.0f,
+    //         1.0f
+    //     );
+    //     // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Message sent");
+    //     return true;
+    // }
 
 #if AP_AHRS_ENABLED
     case MSG_ATTITUDE:

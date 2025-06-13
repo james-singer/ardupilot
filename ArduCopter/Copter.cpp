@@ -774,7 +774,7 @@ void Copter::three_hz_loop()
 
     // check if avoidance should be enabled based on alt
     low_alt_avoidance();
-    gcs().send_message(MSG_STRAIN_DATA);
+    // gcs().send_message(MSG_STRAIN_DATA);
 }
 
 // ap_value calculates a 32-bit bitmask representing various pieces of
