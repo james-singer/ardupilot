@@ -17,6 +17,8 @@
 
 #include "GCS_config.h"
 
+#include "Copter.h"
+
 #if HAL_GCS_ENABLED
 
 #include "GCS.h"
