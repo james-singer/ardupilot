@@ -17,7 +17,7 @@
 
 #include "GCS_config.h"
 
-#include "ArduCopter/Copter.h"
+#include "../../ArduCopter/Copter.h"
 
 #if HAL_GCS_ENABLED
 
