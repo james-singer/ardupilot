@@ -2435,7 +2435,7 @@ void GCS_MAVLINK::send_airspeed()
 void GCS_MAVLINK::send_ahrs()
 {
     const AP_AHRS &ahrs = AP::ahrs();
-    const Vector3f &omega_I = ahrs.get_gyro_drift();
+    // const Vector3f &omega_I = ahrs.get_gyro_drift();
     mavlink_msg_ahrs_send(
         chan,
         100.0f,
