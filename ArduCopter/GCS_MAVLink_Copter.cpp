@@ -351,10 +351,10 @@ bool GCS_MAVLINK_Copter::try_send_message(enum ap_message id)
             chan,
             AP_HAL::millis(),
             0,
-            1,
-            1,
-            1,
-            1
+            1.0f,
+            1.0f,
+            1.0f,
+            1.0f
         );
         return true;
     }
