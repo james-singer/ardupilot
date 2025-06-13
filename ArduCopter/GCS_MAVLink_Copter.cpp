@@ -335,29 +335,29 @@ bool GCS_MAVLINK_Copter::try_send_message(enum ap_message id)
 {
     switch(id) {
         
-    case MSG_STRAIN_DATA: {
-        // float buffer[4];
-        // copter.strain.get_arm_averages(buffer);
-        // mavlink_msg_strain_sensor_send(
-        //     chan,
-        //     AP_HAL::millis(),
-        //     0,
-        //     buffer[0],
-        //     buffer[1],
-        //     buffer[2],
-        //     buffer[3]
-        // );
-        mavlink_msg_strain_sensor_send(
-            chan,
-            AP_HAL::millis(),
-            0,
-            1.0f,
-            1.0f,
-            1.0f,
-            1.0f
-        );
-        return true;
-    }
+    // case MSG_STRAIN_DATA: {
+    //     // float buffer[4];
+    //     // copter.strain.get_arm_averages(buffer);
+    //     // mavlink_msg_strain_sensor_send(
+    //     //     chan,
+    //     //     AP_HAL::millis(),
+    //     //     0,
+    //     //     buffer[0],
+    //     //     buffer[1],
+    //     //     buffer[2],
+    //     //     buffer[3]
+    //     // );
+    //     mavlink_msg_strain_sensor_send(
+    //         chan,
+    //         AP_HAL::millis(),
+    //         0,
+    //         1.0f,
+    //         1.0f,
+    //         1.0f,
+    //         1.0f
+    //     );
+    //     return true;
+    // }
 
 #if AP_TERRAIN_AVAILABLE
     case MSG_TERRAIN_REQUEST:

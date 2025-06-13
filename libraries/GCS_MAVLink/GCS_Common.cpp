@@ -6211,6 +6211,30 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
 
     switch(id) {
 
+    case MSG_STRAIN_DATA: {
+        // float buffer[4];
+        // copter.strain.get_arm_averages(buffer);
+        // mavlink_msg_strain_sensor_send(
+        //     chan,
+        //     AP_HAL::millis(),
+        //     0,
+        //     buffer[0],
+        //     buffer[1],
+        //     buffer[2],
+        //     buffer[3]
+        // );
+        mavlink_msg_strain_sensor_send(
+            chan,
+            AP_HAL::millis(),
+            0,
+            1.0f,
+            1.0f,
+            1.0f,
+            1.0f
+        );
+        return true;
+    }
+
 #if AP_AHRS_ENABLED
     case MSG_ATTITUDE:
         CHECK_PAYLOAD_SIZE(ATTITUDE);
