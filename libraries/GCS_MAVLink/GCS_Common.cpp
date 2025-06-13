@@ -590,7 +590,8 @@ void GCS_MAVLINK::send_ahrs2()
                                euler.z,
                                loc.alt*1.0e-2f,
                                loc.lat,
-                               loc.lng);
+                               loc.lng,
+                                1.0f);
     }
 }
 #endif  // AP_AHRS_ENABLED
@@ -3406,8 +3407,7 @@ void GCS_MAVLINK::send_vfr_hud()
         (ahrs.yaw_sensor / 100) % 360,
         abs(vfr_hud_throttle()),
         vfr_hud_alt(),
-        vfr_hud_climbrate(),
-        1.0f);
+        vfr_hud_climbrate());
 }
 #endif  // AP_AHRS_ENABLED
 
