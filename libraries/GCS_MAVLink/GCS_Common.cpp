@@ -6223,6 +6223,8 @@ bool GCS_MAVLINK::try_send_message(const enum ap_message id)
         //     buffer[2],
         //     buffer[3]
         // );
+        // Attempt to print to maxproxy?
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "Entered try send message for strain data message");
         mavlink_msg_strain_sensor_send(
             chan,
             AP_HAL::millis(),
