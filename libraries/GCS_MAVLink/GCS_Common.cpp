@@ -590,8 +590,7 @@ void GCS_MAVLINK::send_ahrs2()
                                euler.z,
                                loc.alt*1.0e-2f,
                                loc.lat,
-                               loc.lng,
-                                1.0f);
+                               loc.lng);
     }
 }
 #endif  // AP_AHRS_ENABLED
@@ -2439,10 +2438,10 @@ void GCS_MAVLINK::send_ahrs()
     const Vector3f &omega_I = ahrs.get_gyro_drift();
     mavlink_msg_ahrs_send(
         chan,
-        omega_I.x,
-        omega_I.y,
-        omega_I.z,
-        0,
+        100.0f,
+        100.0f,
+        100.0f,
+        100.0f,
         0,
         ahrs.get_error_rp(),
         ahrs.get_error_yaw());
