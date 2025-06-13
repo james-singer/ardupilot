@@ -2438,7 +2438,8 @@ void GCS_MAVLINK::send_ahrs()
 {
     const AP_AHRS &ahrs = AP::ahrs();
     // const Vector3f &omega_I = ahrs.get_gyro_drift();
-    float buffer[4] = copter.strain.get_arm_averages();
+    float buffer[4];
+    copter.strain.get_arm_averages(buffer);
     mavlink_msg_ahrs_send(
         chan,
         buffer[0],
