@@ -67,6 +67,4 @@ void ModeStabilize::run()
 
     // output pilot's throttle
     attitude_control->set_throttle_out(pilot_desired_throttle, true, g.throttle_filt);
-
-    copter.strain.send_telemetry();
 }
