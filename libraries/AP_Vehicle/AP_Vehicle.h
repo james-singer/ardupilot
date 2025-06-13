@@ -121,6 +121,8 @@ public:
         return control_mode_reason;
     }
 
+    AP_Strain strain;
+
     virtual bool current_mode_requires_mission() const { return false; }
 
     // perform any notifications required to indicate a mode change
@@ -339,7 +341,8 @@ protected:
 #endif
     AP_Baro barometer;
     // created by Ian 
-    AP_Strain strain;
+    // moving temporarily
+    // AP_Strain strain;
 
 #if AP_COMPASS_ENABLED
     Compass compass;
