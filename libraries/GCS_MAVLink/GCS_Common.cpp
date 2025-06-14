@@ -2439,16 +2439,17 @@ void GCS_MAVLINK::send_ahrs()
 
     // Joe - Hijacked Message!
     // TODO: Reset this to its original state and use AHRS2 for higher frequency
+    // Update: Message has been successfully returned to its original state
     const AP_AHRS &ahrs = AP::ahrs();
-    // const Vector3f &omega_I = ahrs.get_gyro_drift();
-    float buffer[4];
-    copter.strain.get_arm_averages(buffer);
+    const Vector3f &omega_I = ahrs.get_gyro_drift();
+    // float buffer[4];
+    // copter.strain.get_arm_averages(buffer);
     mavlink_msg_ahrs_send(
         chan,
-        buffer[0],
-        buffer[1],
-        buffer[2],
-        buffer[3],
+        omega_I.x,
+        omega_I.y,
+        omega_I.z,
+        0,
         0,
         ahrs.get_error_rp(),
         ahrs.get_error_yaw());
