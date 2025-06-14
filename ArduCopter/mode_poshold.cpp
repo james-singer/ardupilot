@@ -491,7 +491,7 @@ void ModePosHold::run()
     // run the vertical position controller and set output throttle
     pos_control->update_z_controller();
 
-    copter.strain.send_telemetry();
+    // copter.strain.send_telemetry();
 }
 
 // poshold_update_pilot_lean_angle - update the pilot's filtered lean angle with the latest raw input received
