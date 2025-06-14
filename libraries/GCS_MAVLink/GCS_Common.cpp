@@ -580,20 +580,41 @@ void GCS_MAVLINK::send_proximity()
 // report AHRS2 state
 void GCS_MAVLINK::send_ahrs2()
 {
-    const AP_AHRS &ahrs = AP::ahrs();
-    Vector3f euler;
-    Location loc {};
+    // const AP_AHRS &ahrs = AP::ahrs();
+    // Vector3f euler;
+    // Location loc {};
+    // Going to hijack this message to send strain
     // we want one or both of these, use | to avoid short-circuiting:
-    if (uint8_t(ahrs.get_secondary_attitude(euler)) |
-        uint8_t(ahrs.get_secondary_position(loc))) {
-        mavlink_msg_ahrs2_send(chan,
-                               euler.x,
-                               euler.y,
-                               euler.z,
-                               loc.alt*1.0e-2f,
-                               loc.lat,
-                               loc.lng);
-    }
+    // if (uint8_t(ahrs.get_secondary_attitude(euler)) |
+    //     uint8_t(ahrs.get_secondary_position(loc))) {
+    //     mavlink_msg_ahrs2_send(chan,
+    //                            euler.x,
+    //                            euler.y,
+    //                            euler.z,
+    //                            loc.alt*1.0e-2f,
+    //                            loc.lat,
+    //                            loc.lng);
+    // }
+
+    float buffer[4];
+    // copter.strain.get_arm_averages(buffer);
+    // if (uint8_t(ahrs.get_secondary_attitude(euler)) |
+    //     uint8_t(ahrs.get_secondary_position(loc))) {
+    //     mavlink_msg_ahrs2_send(chan,
+    //                            euler.x,
+    //                            euler.y,
+    //                            euler.z,
+    //                            loc.alt*1.0e-2f,
+    //                            loc.lat,
+    //                            loc.lng);
+    // }
+    mavlink_msg_ahrs2_send(chan,
+                           buffer[0],
+                           buffer[1],
+                           buffer[2],
+                           buffer[3],
+                           0,
+                           0);
 }
 #endif  // AP_AHRS_ENABLED
 
