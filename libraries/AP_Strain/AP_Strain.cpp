@@ -106,7 +106,7 @@ float AP_Strain::get_scaled_avg_data()
 void AP_Strain::get_arm_averages(float* destination)
 {
     uint8_t count = 0;
-    // Code is going to be tailored to current demo w/ two microcontrollers and four arms
+    // Code is going to be tailored to current demo configuration w/ two microcontrollers and four arms
     // Not useful for other cases 
     for (int i = 0; i < STRAIN_MAX_INSTANCES; i++)
     {
