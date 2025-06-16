@@ -708,7 +708,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
             }
 
             // if velocity is very low reduce braking time to 0.5seconds
-            if ((fabsf(vel_right) <= POSHOLD_SPEED_0) && (brake.timeout_roll > 50*LOOP_RATE_FACTOR)) {
+            if ((fabsf(vel_right) <= ACRO_SPEED_0) && (brake.timeout_roll > 50*LOOP_RATE_FACTOR)) {
                 brake.timeout_roll = 50*LOOP_RATE_FACTOR;
             }
 
