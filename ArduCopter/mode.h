@@ -424,6 +424,7 @@ public:
 
     float switch_time;
     float switch_delay = 2.0f;
+    float switch_back_delay = 10.0f;
     Disturbance disturbance;
     float disturbance_time;
 
