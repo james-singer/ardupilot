@@ -59,7 +59,7 @@ bool ModePosHold::init(bool ignore_checks)
 
     // initialise wind_comp each time PosHold is switched on
     init_wind_comp_estimate();
-    // gcs().send_message(MSG_STRAIN_DATA);
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
     return true;
 }
 
