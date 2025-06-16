@@ -64,6 +64,7 @@ bool ModeAcro::init(bool ignore_checks)
 
     // used for strain demo
     disturbance_time = 0.0f;
+    switch_time = 0.0f;
     disturbance.init();
     copter.strain.calibrate_all();
 
