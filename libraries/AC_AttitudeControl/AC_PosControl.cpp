@@ -1084,7 +1084,7 @@ void AC_PosControl::print_throttle_hover()
     float hover_value = _motors.get_throttle_hover();
     char buf[60];
     snprintf(buf, sizeof(buf), "Throttle hover value: %.4f", hover_value);
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, buf);
 }
 
 // Joe - update_z_controller_strain 
