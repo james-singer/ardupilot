@@ -751,7 +751,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
             }
 
             // calculate controller_to_pilot mix ratio
-            controller_to_pilot_roll_mix = (float)controller_to_pilot_timer_roll / (float)POSHOLD_CONTROLLER_TO_PILOT_MIX_TIMER;
+            controller_to_pilot_roll_mix = (float)controller_to_pilot_timer_roll / (float)ACRO_CONTROLLER_TO_PILOT_MIX_TIMER;
 
             // mix final loiter lean angle and pilot desired lean angles
             roll = mix_controls(controller_to_pilot_roll_mix, controller_final_roll, pilot_roll + wind_comp_roll);
