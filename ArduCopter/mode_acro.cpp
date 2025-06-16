@@ -776,7 +776,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
                 pitch_mode = RPMode::BRAKE;       // set brake pitch mode
                 brake.pitch = 0.0f;                 // initialise braking angle to zero
                 brake.angle_max_pitch = 0.0f;       // reset brake_angle_max so we can detect when vehicle begins to flatten out during braking
-                brake.timeout_pitch = POSHOLD_BRAKE_TIME_ESTIMATE_MAX; // number of cycles the brake will be applied, updated during braking mode.
+                brake.timeout_pitch = ACRO_BRAKE_TIME_ESTIMATE_MAX; // number of cycles the brake will be applied, updated during braking mode.
                 brake.time_updated_pitch = false;   // flag the braking time can be re-estimated
             }
 
