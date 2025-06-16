@@ -860,7 +860,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
     if (roll_mode == RPMode::BRAKE_READY_TO_LOITER && pitch_mode == RPMode::BRAKE_READY_TO_LOITER) {
         roll_mode = RPMode::BRAKE_TO_LOITER;
         pitch_mode = RPMode::BRAKE_TO_LOITER;
-        brake.to_loiter_timer = POSHOLD_BRAKE_TO_LOITER_TIMER;
+        brake.to_loiter_timer = ACRO_BRAKE_TO_LOITER_TIMER;
         // init loiter controller
         loiter_nav->init_target(inertial_nav.get_position_xy_cm() - pos_control->get_pos_offset_cm().xy().tofloat());
         // set delay to start of wind compensation estimate updates
@@ -887,7 +887,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
 
                 // mix of brake and loiter controls.  0 = fully brake
                 // controls, 1 = fully loiter controls
-                const float brake_to_loiter_mix = (float)brake.to_loiter_timer / (float)POSHOLD_BRAKE_TO_LOITER_TIMER;
+                const float brake_to_loiter_mix = (float)brake.to_loiter_timer / (float)ACRO_BRAKE_TO_LOITER_TIMER;
 
                 // calculate brake.roll and pitch angles to counter-act velocity
                 update_brake_angle_from_velocity(brake.roll, vel_right);
