@@ -14,7 +14,7 @@
 #include <AP_Scripting/AP_Scripting_config.h>
 #include "AC_AttitudeControl.h"     // Attitude control library
 #include <AP_Strain/AP_Strain.h>  // Add this with other includes at the top
-#include "GCS.h"
+#include "GCS_MAVLink/GCS.h"
 
 #include <AP_Logger/LogStructure.h>
 
