@@ -59,7 +59,7 @@ bool ModePosHold::init(bool ignore_checks)
 
     // initialise wind_comp each time PosHold is switched on
     init_wind_comp_estimate();
-    pos_control->print_throttle_hover();
+    // pos_control->print_throttle_hover();
     return true;
 }
 

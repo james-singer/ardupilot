@@ -108,7 +108,7 @@ bool ModeAcro::init(bool ignore_checks)
     disturbance.init();
     copter.strain.calibrate_all();
     
-    pos_control->print_throttle_hover();
+    // pos_control->print_throttle_hover();
     
     return true;
 }
