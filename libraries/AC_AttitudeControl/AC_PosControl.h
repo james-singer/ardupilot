@@ -14,7 +14,6 @@
 #include <AP_Scripting/AP_Scripting_config.h>
 #include "AC_AttitudeControl.h"     // Attitude control library
 #include <AP_Strain/AP_Strain.h>  // Add this with other includes at the top
-#include "GCS_MAVLink/GCS.h"
 
 #include <AP_Logger/LogStructure.h>
 
@@ -247,7 +246,6 @@ public:
 
     // Joe - update_z_controller_strain runs the vertical position controller correcting position, velocity, acceleration, and strain errors
     void update_z_controller_strain(float disturbance_multiplier);
-    void print_throttle_hover();
     // Joe - update_z_controller_disturbance adds the disturbance
     void update_z_controller_disturbance(float disturbance_multiplier);
 

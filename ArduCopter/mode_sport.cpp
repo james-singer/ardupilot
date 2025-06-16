@@ -64,7 +64,6 @@ bool ModeSport::init(bool ignore_checks)
     disturbance_time = 0.0f;
     disturbance.init();
     copter.strain.calibrate_all();
-    // pos_control->print_throttle_hover();
 
     
     return true;

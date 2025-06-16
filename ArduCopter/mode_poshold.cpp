@@ -59,7 +59,6 @@ bool ModePosHold::init(bool ignore_checks)
 
     // initialise wind_comp each time PosHold is switched on
     init_wind_comp_estimate();
-    // pos_control->print_throttle_hover();
     return true;
 }
 
@@ -491,7 +490,6 @@ void ModePosHold::run()
     // run the vertical position controller and set output throttle
     pos_control->update_z_controller();
 
-    // copter.strain.send_telemetry();
 }
 
 // poshold_update_pilot_lean_angle - update the pilot's filtered lean angle with the latest raw input received
