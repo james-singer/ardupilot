@@ -1078,6 +1078,10 @@ void AC_PosControl::update_z_controller()
     }
 }
 
+void AC_PosControl::print_throttle_hover()
+{
+    GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
+}
 
 // Joe - update_z_controller_strain 
 void AC_PosControl::update_z_controller_strain(float disturbance_multiplier)

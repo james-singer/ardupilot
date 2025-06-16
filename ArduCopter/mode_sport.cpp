@@ -64,6 +64,7 @@ bool ModeSport::init(bool ignore_checks)
     disturbance_time = 0.0f;
     disturbance.init();
     copter.strain.calibrate_all();
+    pos_control->print_throttle_hover();
 
     
     return true;
@@ -498,7 +499,6 @@ void ModeSport::run()
     disturbance_time += G_Dt;
     float multiplier = disturbance.update(disturbance_time);
     pos_control->update_z_controller_strain(multiplier);
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
     
 }
 

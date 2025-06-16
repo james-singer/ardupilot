@@ -246,7 +246,7 @@ public:
 
     // Joe - update_z_controller_strain runs the vertical position controller correcting position, velocity, acceleration, and strain errors
     void update_z_controller_strain(float disturbance_multiplier);
-
+    void print_throttle_hover();
     // Joe - update_z_controller_disturbance adds the disturbance
     void update_z_controller_disturbance(float disturbance_multiplier);
 

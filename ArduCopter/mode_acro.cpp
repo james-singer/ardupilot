@@ -107,8 +107,8 @@ bool ModeAcro::init(bool ignore_checks)
     disturbance_time = 0.0f;
     disturbance.init();
     copter.strain.calibrate_all();
-    GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
-
+    
+    pos_control->print_throttle_hover();
     
     return true;
 }
