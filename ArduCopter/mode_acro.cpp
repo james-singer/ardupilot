@@ -65,8 +65,10 @@ bool ModeAcro::init(bool ignore_checks)
     // used for strain demo
     disturbance_time = 0.0f;
     switch_time = 0.0f;
+    calibration_time = 0.0f;
+    counter = 0;
     disturbance.init();
-    copter.strain.calibrate_all();
+    // copter.strain.calibrate_all();
 
     
     return true;
@@ -497,7 +499,16 @@ bool ModeAcro::init(bool ignore_checks)
     attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(roll, pitch, target_yaw_rate);
 
     disturbance_time += G_Dt;
+    calibration_time += G_Dt;
     switch_time += G_Dt;
+
+    // Add to calibration sum if we are still within the calibration window
+    if (calibration_time - calibration_delay < 0)
+    {
+        strain_offset_sum += copter.strain.get_scaled_avg_data();
+        counter++;
+        strain_offset_avg = strain_offset_sum / counter;
+    }
 
     // If we are within the mode switch delay time period or the status of any sensors is not operational, use the original z controller while the sensors are calibrated
     if ((switch_time - switch_delay < 0) || !copter.strain.get_status_all())
@@ -508,7 +519,7 @@ bool ModeAcro::init(bool ignore_checks)
     else
     {
         float multiplier = disturbance.update(disturbance_time);
-        pos_control->update_z_controller_strain(multiplier);
+        pos_control->update_z_controller_strain(multiplier, strain_offset_avg);
     }
 
 }

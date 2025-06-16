@@ -424,6 +424,11 @@ public:
 
     float switch_time;
     float switch_delay = 2.0f;
+    float calibration_time;
+    float calibration_delay = 1.0f;
+    float strain_offset_sum;
+    float strain_offset_avg;
+    uint32_t counter;
     Disturbance disturbance;
     float disturbance_time;
 
