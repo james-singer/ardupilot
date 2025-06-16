@@ -5,6 +5,7 @@
 #include <AP_Motors/AP_Motors.h>    // motors library
 #include <AP_Vehicle/AP_Vehicle_Type.h>
 #include <AP_Scheduler/AP_Scheduler.h>
+#include <stdio.h>
 
 extern const AP_HAL::HAL& hal;
 
@@ -1080,6 +1081,9 @@ void AC_PosControl::update_z_controller()
 
 void AC_PosControl::print_throttle_hover()
 {
+    float hover_value = _motors.get_throttle_hover();
+    char buf[60];
+    snprintf(buf, sizeof(buf), "Throttle hover value: %.4f", hover_value);
     GCS_SEND_TEXT(MAV_SEVERITY_INFO, _motors.get_throttle_hover());
 }
 
