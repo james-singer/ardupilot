@@ -864,7 +864,7 @@ float controller_to_pilot_roll_mix; // mix of controller and pilot controls.  0 
         // init loiter controller
         loiter_nav->init_target(inertial_nav.get_position_xy_cm() - pos_control->get_pos_offset_cm().xy().tofloat());
         // set delay to start of wind compensation estimate updates
-        wind_comp_start_timer = POSHOLD_WIND_COMP_START_TIMER;
+        wind_comp_start_timer = ACRO_WIND_COMP_START_TIMER;
     }
 
     // roll-mode is used as the combined roll+pitch mode when in BRAKE_TO_LOITER or LOITER modes
