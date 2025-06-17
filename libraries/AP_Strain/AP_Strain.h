@@ -65,9 +65,6 @@ class AP_Strain
 
     uint16_t get_num_calibrations() const { return num_cal; }
 
-    float calibrated_strain_offset = 0;
-    bool calibrated = false;
-
     ////////////////////////////////////////////////////////////////////////////////////////////// 
     private:
     // singleton
