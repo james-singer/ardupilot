@@ -69,7 +69,7 @@ bool ModeAcro::init(bool ignore_checks)
     counter = 0;
     disturbance.init();
     strain_offset_sum = 0.0f;
-    // copter.strain.calibrate_all();
+    copter.strain.calibrate_all();
 
     
     return true;
@@ -510,12 +510,15 @@ bool ModeAcro::init(bool ignore_checks)
         counter++;
         strain_offset_avg = strain_offset_sum / counter;
     }
-    else
-    {
-        // We are now outside the calibration window, meaning manual calibration is complete and we can use the strain offset
-        copter.strain.calibrated = true;
-        copter.strain.calibrated_strain_offset = strain_offset_avg;
-    }
+    // Removing the else statement for comparison with built in calibration
+    // Boolean will never be set to true, meaning we always log the result of get_scaled_avg with no offset
+    // This is fine... with the z bit being sent in init, we should be calibrating the sensors.
+    // else
+    // {
+    //     // We are now outside the calibration window, meaning manual calibration is complete and we can use the strain offset
+    //     copter.strain.calibrated = true;
+    //     copter.strain.calibrated_strain_offset = strain_offset_avg;
+    // }
     pos_control->update_z_controller();
 
     // // If we are within the mode switch delay time period or the status of any sensors is not operational, use the original z controller while the sensors are calibrated
