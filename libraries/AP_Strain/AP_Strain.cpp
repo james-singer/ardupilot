@@ -99,8 +99,11 @@ float AP_Strain::get_scaled_weighted_avg_data()
 }
 
 float AP_Strain::get_scaled_avg_data()
-{
-    return get_avg_data() / SENSOR_SCALE_FACTOR;
+{   
+    if (!calibrated)
+        return get_avg_data() / SENSOR_SCALE_FACTOR;
+    else
+        return (get_avg_data() / SENSOR_SCALE_FACTOR) - calibrated_strain_offset;
 }
 
 void AP_Strain::get_arm_averages(float* destination)

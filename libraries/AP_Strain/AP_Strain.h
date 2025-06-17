@@ -58,7 +58,6 @@ class AP_Strain
     AP_Strain::Status get_status(uint8_t instance);
     uint32_t get_last_update(uint8_t instance);
     uint8_t get_ID(uint8_t instance) { return sensors[instance].I2C_id; }
-    // void send_telemetry();
     
     bool reset_all();
     bool calibrate_all();
@@ -66,6 +65,8 @@ class AP_Strain
 
     uint16_t get_num_calibrations() const { return num_cal; }
 
+    float calibrated_strain_offset = 0;
+    bool calibrated = false;
 
     ////////////////////////////////////////////////////////////////////////////////////////////// 
     private:

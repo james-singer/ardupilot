@@ -68,6 +68,7 @@ bool ModeAcro::init(bool ignore_checks)
     calibration_time = 0.0f;
     counter = 0;
     disturbance.init();
+    strain_offset_sum = 0.0f;
     // copter.strain.calibrate_all();
 
     
@@ -509,18 +510,25 @@ bool ModeAcro::init(bool ignore_checks)
         counter++;
         strain_offset_avg = strain_offset_sum / counter;
     }
-
-    // If we are within the mode switch delay time period or the status of any sensors is not operational, use the original z controller while the sensors are calibrated
-    if ((switch_time - switch_delay < 0) || !copter.strain.get_status_all())
-    {
-        pos_control->update_z_controller();
-    }
-    // Otherwise, the sensors have had time to calibrate and thus we can use the new z controller
     else
     {
-        float multiplier = disturbance.update(disturbance_time);
-        pos_control->update_z_controller_strain(multiplier, strain_offset_avg);
+        // We are now outside the calibration window, meaning manual calibration is complete and we can use the strain offset
+        copter.strain.calibrated = true;
+        copter.strain.calibrated_strain_offset = strain_offset_avg;
     }
+    pos_control->update_z_controller();
+
+    // // If we are within the mode switch delay time period or the status of any sensors is not operational, use the original z controller while the sensors are calibrated
+    // if ((switch_time - switch_delay < 0) || !copter.strain.get_status_all())
+    // {
+    //     pos_control->update_z_controller(0.0f);
+    // }
+    // // Otherwise, the sensors have had time to calibrate and thus we can use the new z controller
+    // else
+    // {
+    //     float multiplier = disturbance.update(disturbance_time);
+    //     pos_control->update_z_controller_strain(multiplier, strain_offset_avg);
+    // }
 
 }
 
