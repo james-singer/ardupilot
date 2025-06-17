@@ -142,7 +142,7 @@ void ModeDrift::run()
     //     pos_control->update_z_controller_strain(multiplier);
     // }
     float multiplier = disturbance.update(disturbance_time);
-    pos_control->update_z_controller_strain(multiplier, 1.0f);
+    pos_control->update_z_controller_strain(multiplier);
 }
 
 // get_throttle_assist - return throttle output (range 0 ~ 1) based on pilot input and z-axis velocity
