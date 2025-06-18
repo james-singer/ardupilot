@@ -15,7 +15,7 @@
 #define STRAIN_SENSORS 12
 #define NUM_ARMS 4
 #define BUS_NUMBER = 0
-#define SENSOR_SCALE_FACTOR 60
+#define SENSOR_SCALE_FACTOR 55
 // timeouts for health reporting
 #define STRAIN_TIMEOUT_MS                 500     // timeout in ms since last successful read
 #define STRAIN_DATA_CHANGE_TIMEOUT_MS    2000     // timeout in ms since first strain gauge reading changed 
