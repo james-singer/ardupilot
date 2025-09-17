@@ -8,6 +8,7 @@
 // #include "AC_CustomControl_Empty.h"
 #include "AC_CustomControl_PID.h"
 #include "AC_CustomControl_LQR.h"
+#include "AC_CustomControl_HINF"
 #include <GCS_MAVLink/GCS.h>
 #include <AP_Logger/AP_Logger.h>
 
@@ -37,6 +38,8 @@ const AP_Param::GroupInfo AC_CustomControl::var_info[] = {
     // parameters for LQR controller
     AP_SUBGROUPVARPTR(_backend, "3_", 8, AC_CustomControl, _backend_var_info[2]),
 
+    // parameters for HINF controller
+    AP_SUBGROUPVARPTR(_backend, "4_", 9, AC_CustomControl, _backend_var_info[3]),
     AP_GROUPEND
 };
 
@@ -69,6 +72,10 @@ void AC_CustomControl::init(void)
         case CustomControlType::CONT_LQR:
             _backend = NEW_NOTHROW AC_CustomControl_LQR(*this, _ahrs, _att_control, _motors, _dt);
             _backend_var_info[get_type()] = AC_CustomControl_LQR::var_info;
+            break;
+        case CustomControlType::CONT_HINF:
+            _backend = NEW_NOTHROW AC_CustomControl_HINF(*this, _ahrs, _att_control, _motors, _dt);
+            _backend_var_info[get_type()] = AC_CustomControl_HINF::var_info;
             break;
         default:
             return;
